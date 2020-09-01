@@ -11,17 +11,7 @@ import DataProvider
 
 extension ProfileViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let user = user else { return 1 }
-        var postsCount = 0
-        DataProviders.shared.postsDataProvider.findPosts(by: user.id, queue: queue) { posts in
-            if posts != nil {
-                postsCount = posts!.count
-            } else {
-                DispatchQueue.main.async {
-                    Alert.showBasic(vc: self)
-                }
-            }
-        }
+        guard let postsCount = self.postsCount else { return 1 }
         return postsCount
     }
     
@@ -31,7 +21,9 @@ extension ProfileViewController: UICollectionViewDataSource {
         if let user = user {
             DataProviders.shared.postsDataProvider.findPosts(by: user.id, queue: queue) { posts in
                 if posts != nil {
-                    cell.post = posts![indexPath.item]
+                    DispatchQueue.main.async {
+                        cell.post = posts![indexPath.item]
+                    }
                 } else {
                     DispatchQueue.main.async {
                         Alert.showBasic(vc: self)
@@ -40,7 +32,7 @@ extension ProfileViewController: UICollectionViewDataSource {
             }
             
         }
-        cell.backgroundColor = .red
+        cell.turnActivityOn()
         return cell
     }
     

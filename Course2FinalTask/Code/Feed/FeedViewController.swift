@@ -25,21 +25,51 @@ class FeedViewController: UIViewController {
         return collectionView
     }()
     
+    var postsCount: Int!
+    
+    /// Затемняющая вьюха, работающая вместе с индикатором активности
+    private lazy var activityIndicatorShadowView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0.7
+        view.isHidden = true
+        return view
+    }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .white)
+        indicator.center = view.center
+        indicator.isHidden = true
+        return indicator
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.backgroundColor = .white
         addSubviews()
         setUpSubviews()
+        
+        DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
+            if let postsCount = posts?.count {
+                self.postsCount = postsCount
+            }
+        }
     }
     
     private func addSubviews() {
-        view.addSubview(collectionView)
+        [collectionView, activityIndicatorShadowView, activityIndicator].forEach { view.addSubview($0) }
     }
     
     // Настраиваем размер коллекшн вью:
     private func setUpSubviews() {
         collectionView.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: view.bounds.width,
+            height: view.bounds.height
+        )
+        activityIndicatorShadowView.frame = CGRect(
             x: 0,
             y: 0,
             width: view.bounds.width,
@@ -61,23 +91,29 @@ protocol TransitionProtocol: AnyObject {
 extension FeedViewController: TransitionProtocol {
     
     func showListOfUsersLikedThisPost(postId: Post.Identifier) {
+        turnActivityOn()
+        
+        // Ищем список пользователей, лайкнувших пост:
         DataProviders.shared.postsDataProvider.usersLikedPost(with: postId, queue: self.queue) { arrayOfUsers in
             if arrayOfUsers == nil {
                 
                 // Показываем алерт о неизвестной ошибке:
                 DispatchQueue.main.async {
+                    self.turnActivityOff()
                     Alert.showBasic(vc: self)
                 }
             } else if arrayOfUsers?.count == 0 {
                 
                 // Показываем алерт о том, что лист пустой:
                 DispatchQueue.main.async {
+                    self.turnActivityOff()
                     Alert.showEmptyArray(vc: self)
                 }
             } else {
                 
                 // Показываем таблицу с юзерами:
                 DispatchQueue.main.async {
+                    self.turnActivityOff()
                     self.navigationController?.pushViewController(TableViewController(users: arrayOfUsers!, title: "Likes"), animated: true)
                 }
             }
@@ -85,22 +121,29 @@ extension FeedViewController: TransitionProtocol {
     }
     
     func showProfile(userId: User.Identifier) {
+        turnActivityOn()
+        
+        // Ищем пользователя:
         DataProviders.shared.usersDataProvider.user(with: userId, queue: self.queue) { user in
-            if user == nil {
+            
+            guard let user = user else {
                 
                 // Показываем алерт о неизвестной ошибке:
                 DispatchQueue.main.async {
+                    self.turnActivityOff()
                     Alert.showBasic(vc: self)
                 }
-            } else {
-                
-                // Показываем страницу юзера:
-                DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(ProfileViewController(user: user), animated: true)
-                }
+                return
+            }
+            
+            // Показываем страницу юзера:
+            DispatchQueue.main.async {
+                self.turnActivityOff()
+                self.navigationController?.pushViewController(ProfileViewController(user: user, isFollowed: user.currentUserFollowsThisUser), animated: true)
             }
         }
     }
+    
     
 }
 
@@ -111,3 +154,21 @@ extension FeedViewController {
     
 }
 
+// ДОбавляем включениеи выключение индикатора активности:
+extension FeedViewController {
+    
+    func turnActivityOn() {
+        // Установка активити индикатора и его фона:
+        activityIndicatorShadowView.isHidden = false
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    func turnActivityOff() {
+        // Установка активити индикатора и его фона:
+        activityIndicator.stopAnimating()
+        activityIndicatorShadowView.isHidden = true
+        activityIndicator.isHidden = true
+    }
+    
+}

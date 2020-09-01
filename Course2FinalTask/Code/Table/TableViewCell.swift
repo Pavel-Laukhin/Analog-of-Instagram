@@ -16,7 +16,7 @@ class TableViewCell: UITableViewCell {
             guard let user = user else { return }
             imageView!.image = user.avatar
             textLabel!.text = user.fullName
-            setupLayout()
+            setUpLayout()
         }
     }
     
@@ -27,7 +27,7 @@ class TableViewCell: UITableViewCell {
     //    }
     
     // Настроим расположение картинки и текста:
-    private func setupLayout() {
+    private func setUpLayout() {
         imageView?.frame = CGRect(
             x: 15,
             y: 0,

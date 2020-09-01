@@ -72,7 +72,8 @@ class TableViewController: UITableViewController {
         clearsSelectionOnViewWillAppear = false
         
         // Пушим контроллер с профилем пользователя:
-        navigationController?.pushViewController(ProfileViewController(user: users[indexPath.row]), animated: true)
+        let user = users[indexPath.row]
+        navigationController?.pushViewController(ProfileViewController(user: user, isFollowed: user.currentUserFollowsThisUser), animated: true)
     }
     
     // Делаем так, чтобы подсветка строки не сразу исчезала, а с задержкой:

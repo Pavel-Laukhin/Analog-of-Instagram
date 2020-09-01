@@ -14,8 +14,31 @@ class ProfileViewController: UIViewController {
     
     var user: User?
     
+    /// Статус, определяющий, следит ли наш текущий юзер за данным юзером или нет
+    var isFollowed: Bool?
+//    {
+//        return user?.currentUserFollowsThisUser
+//    }
+
+    var postsCount: Int?  {
+        get {
+            guard let user = user else { return nil }
+            var count: Int?
+            DataProviders.shared.postsDataProvider.findPosts(by: user.id, queue: queue) { posts in
+                if posts != nil {
+                    count = posts!.count
+                }
+            }
+            while count == nil {
+                ()
+            }
+            return count
+        }
+    }
+    
     private let scrollView = UIScrollView()
     
+    // MARK: - Visual elements
     private var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -26,17 +49,6 @@ class ProfileViewController: UIViewController {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .black
-        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { currentUser in
-            if currentUser != nil {
-                DispatchQueue.main.async {
-                    label.text = currentUser!.fullName
-                }
-            } else {
-                DispatchQueue.main.async {
-                    Alert.showBasic(vc: self)
-                }
-            }
-        }
         return label
     }()
     private lazy var followersButton: UIButton = {
@@ -51,7 +63,6 @@ class ProfileViewController: UIViewController {
         button.addTarget(self, action: #selector(followingButtonTapped), for: .touchUpInside)
         return button
     }()
-    
     private lazy var collectionView: UICollectionView = {
         // 1. Делаем дефолтный макет, иначе наша коллекшн вью не сможет понять, как ей отрисовывать наши ячейки на экране:
         let layout = UICollectionViewFlowLayout()
@@ -66,13 +77,28 @@ class ProfileViewController: UIViewController {
         // 5.Возвращаем результат:
         return collectionView
     }()
+    private lazy var followButton: UIButton = {
+        let button = UIButton(type: .system)
+        
+        // Если ничего не известно про статус isFollowed, то значит это текущий юзер, и кнопку отображать не нужно
+        guard isFollowed != nil else {
+            button.isHidden = true
+            return button
+        }
+        if isFollowed == false {
+            button.setTitle("Follow", for: .normal)
+        } else {
+            button.setTitle("Unfollow", for: .normal)
+        }
+        button.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
     // Делаем инициализатор, который может принимать юзера:
-    init(user: User? = nil) {
+    init(user: User, isFollowed: Bool? = nil) {
         self.user = user
+        self.isFollowed = isFollowed
         super.init(nibName: nil, bundle: nil)
-        
-        updateController()
     }
     
     required init?(coder: NSCoder) {
@@ -82,34 +108,15 @@ class ProfileViewController: UIViewController {
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Если юзер есть, то ничего не передаем. Если нет, то ставим текущего юзера:
-        if user == nil {
-            DataProviders.shared.usersDataProvider.currentUser(queue: queue) { currentUser in
-                if currentUser != nil {
-                    self.user = currentUser
-                } else {
-                    Alert.showBasic(vc: self)
-                }
-            }
-        }
-        
+        print("viewDidLoad")
         view.backgroundColor = .white
+        updateUI()
         addSubviews()
-        updateController()
+        setUpLayout()
     }
     
-    private func addSubviews() {
-        view.addSubview(scrollView)
-        [avatarImageView,
-         userFullNameLabel,
-         followersButton,
-         followingButton,
-         collectionView
-            ].forEach { scrollView.addSubview($0) }
-    }
-    
-    private func updateController() {
+    private func updateUI() {
+        print("updateUI")
         guard let user = user else { return }
         navigationItem.title = user.username
         avatarImageView.image = user.avatar
@@ -118,14 +125,20 @@ class ProfileViewController: UIViewController {
         followingButton.setAttributedTitle(NSAttributedString(string: "Following: \(user.followsCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
     }
     
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        setupLayout()
+    private func addSubviews() {
+        print("addSubviews")
+        view.addSubview(scrollView)
+        [avatarImageView,
+         userFullNameLabel,
+         followersButton,
+         followingButton,
+         collectionView,
+         followButton
+            ].forEach { scrollView.addSubview($0) }
     }
     
-    private func setupLayout() {
-        
+    private func setUpLayout() {
+        print("setUpLayout")
         let topInset: CGFloat = 8
         let collectionViewInset: CGFloat = 8
         
@@ -168,6 +181,14 @@ class ProfileViewController: UIViewController {
             height: followingButton.frame.height
         )
         
+        followButton.sizeToFit()
+        followButton.frame = CGRect(
+            x: view.bounds.width - followButton.frame.width - 16,
+            y: topInset,
+            width: followButton.frame.width,
+            height: followButton.frame.height
+        )
+        
         collectionView.frame = CGRect(
             x: 0,
             y: avatarImageView.frame.maxY + collectionViewInset,
@@ -208,6 +229,17 @@ class ProfileViewController: UIViewController {
             }
         }
     }
+    
+    @objc func followButtonTapped() {
+        if isFollowed == false {
+            followButton.setTitle("Follow", for: .normal)
+            followingButton.sizeToFit()
+        } else {
+            followButton.setTitle("Unfollow", for: .normal)
+            followingButton.sizeToFit()
+        }
+    }
+    
 }
 
 //Добавляем глобальную очередь

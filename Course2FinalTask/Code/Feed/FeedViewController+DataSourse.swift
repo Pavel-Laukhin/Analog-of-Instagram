@@ -12,17 +12,10 @@ import DataProvider
 extension FeedViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        var count = 1
-        
-        //Возвращаем количество постов для рассчета количества ячеек
-        DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
-            if let postsCount = posts?.count {
-                count = postsCount
-            } 
+        while postsCount == nil {
+            ()
         }
-        
-        return count
+        return postsCount!
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -31,21 +24,20 @@ extension FeedViewController: UICollectionViewDataSource {
         // Кастомизируем ячейку. Добавляю цвет фона и передаю пост:
         cell.backgroundColor = .white
         
-        DataProviders.shared.postsDataProvider.feed(queue: queue) { (postsArray: [Post]?) -> Void in
-            if let post = postsArray?[indexPath.item] {
-                cell.post = post
-            }
-        }
+        cell.indexOfCell = indexPath.item
         
         cell.delegate = self
         cell.callback = { [weak self] authorId in
+            self?.turnActivityOn()
             DataProviders.shared.usersDataProvider.user(with: authorId, queue: self?.queue) { user in
                 if let user = user {
                     DispatchQueue.main.async {
-                        self?.navigationController?.pushViewController(ProfileViewController(user: user), animated: true)
+                        self?.turnActivityOff()
+                        self?.navigationController?.pushViewController(ProfileViewController(user: user, isFollowed: user.currentUserFollowsThisUser), animated: true)
                     }
                 } else {
                     DispatchQueue.main.async {
+                        self?.turnActivityOff()
                         Alert.showBasic(vc: self!)
                     }
                 }

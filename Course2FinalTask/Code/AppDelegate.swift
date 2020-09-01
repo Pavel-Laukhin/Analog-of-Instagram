@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import DataProvider
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,16 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let tabBarController = UITabBarController()
         let feedViewController = FeedViewController()
-        let profileViewController = ProfileViewController()
         let feedNavigationController = UINavigationController()
         let profileNavigationController = UINavigationController()
         
         feedNavigationController.viewControllers = [feedViewController]
-        profileNavigationController.viewControllers = [profileViewController]
+        
         
         // Задаем названия контроллеров, которые будут отображаться на панели Таб Бара:
         feedViewController.title = "Feed"
-        profileViewController.title = "Profile"
+        profileNavigationController.title = "Profile"
+//        profileViewController.title = "Profile"
         
         // Добавляем на панель Таб Бара наши контроллеры:
         tabBarController.viewControllers = [feedNavigationController, profileNavigationController]
@@ -39,9 +40,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //        feedViewController.tabBarItem = UITabBarItem(title: "Feed", image: UIImage(named: "feed"), tag: 0)
         //        profileViewController.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(named: "profile"), tag: 0)
         
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         window?.rootViewController = tabBarController
+        
+        // Загружаем информацию о текущем юзере
+        let queue = DispatchQueue.global(qos: .utility)
+        var currentUser: User?
+        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { user in
+            guard let user = user else { return }
+            currentUser = user
+        }
+        
+        // Ждем, пока текущий юзер загружается из DataProviders
+        while currentUser == nil {
+            ()
+        }
+        
+        // Создаем контроллер с текущим юзером, настраиваем, передаем в навигейшн контроллер и обновляем навигейшн контроллер у табБар контроллера:
+        guard let user = currentUser else { return true }
+        let profileViewController = ProfileViewController(user: user)
+        profileNavigationController.viewControllers = [profileViewController]
+        tabBarController.viewControllers?[1] = profileNavigationController
         
         return true
     }

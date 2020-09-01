@@ -14,12 +14,69 @@ enum TransitionState {
 }
 
 final class FeedCell: UICollectionViewCell {
-
+    
+    /// Затемняющая вьюха, работающая вместе с индикатором активности
+    private lazy var activityIndicatorShadowView: UIView = {
+        let view = UIView()
+        view.frame = CGRect(
+            x: 0,
+            y: 0,
+            width: contentView.bounds.width,
+            height: contentView.bounds.height
+        )
+        view.backgroundColor = .black
+        view.alpha = 0.7
+        return view
+    }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .white)
+        indicator.center = contentView.center
+        return indicator
+    }()
+    
+    var indexOfCell: Int? {
+        didSet {
+            
+            // Обнуление визуальных данных ячейки:
+            postImageView.image = nil
+            avatarImageView.image = nil
+            authorNameLabel.text = ""
+            dateLabel.text = ""
+            numberOfLikesLabel.text = ""
+            isLikeButton.isHidden = true
+            descriptionLabel.text = ""
+            
+            
+            // Установка активити индикатора и его фона:
+            [activityIndicatorShadowView, activityIndicator].forEach {contentView.addSubview($0)}
+            activityIndicatorShadowView.isHidden = false
+            activityIndicator.isHidden = false
+            activityIndicator.startAnimating()
+            
+            
+            // Достаем пост из провайдера:
+            guard let indexOfCell = indexOfCell else { return }
+            DataProviders.shared.postsDataProvider.feed(queue: queue) { (postsArray: [Post]?) -> Void in
+                if let post = postsArray?[indexOfCell] {
+                    
+                    // Проверяем, не поменялся ли наш индекс. Если индекс не изменился, то обновляем UI. Это нужно, чтобы запоздавшие задачи из очереди не заменили нам текущий контент.
+                    if indexOfCell == self.indexOfCell {
+                        self.post = post
+                        DispatchQueue.main.async {
+                            self.updateUI()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     var delegate: TransitionProtocol?
     
     // Реализация перехода с помощью колбэка (чисто для себя потестить, как это работает):
     var callback: ((User.Identifier) -> Void)?
-    var transitionState: TransitionState = .callback
+    var transitionState: TransitionState = .delegate
     
     
     private var formatter: DateFormatter {
@@ -28,22 +85,9 @@ final class FeedCell: UICollectionViewCell {
         return formatter
     }
     
-    var post: Post? {
-        didSet {
-            guard let post = post else { return }
-            avatarImageView.image = post.authorAvatar
-            authorNameLabel.text = post.authorUsername
-            dateLabel.text = formatter.string(from: post.createdTime)
-            postImageView.image = post.image
-            numberOfLikesLabel.text = "Likes: \(post.likedByCount)"
-            descriptionLabel.text = post.description
-            addSubviews()
-            addGestureRecognizer()
-            setupLayout()
-        }
-    }
+    var post: Post?
     
-    
+    // MARK: - Visual properties
     private var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -101,6 +145,7 @@ final class FeedCell: UICollectionViewCell {
         return imageView
     }()
     
+    // MARK: - Gesture recognizers
     lazy private var doubleTapGestureRecognizer: UITapGestureRecognizer = {
         let tgr = UITapGestureRecognizer(target: self, action: #selector(doubleTapHandler(sender:)))
         tgr.numberOfTapsRequired = 2
@@ -117,6 +162,27 @@ final class FeedCell: UICollectionViewCell {
 
 private extension FeedCell {
     // MARK: - Life cycle
+    
+    private func updateUI() {
+        
+        // Выключаетм и убираем активити индикатор с его затемняющей вью.
+        activityIndicatorShadowView.isHidden = true
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
+        
+        guard let post = self.post else { return }
+        avatarImageView.image = post.authorAvatar
+        authorNameLabel.text = post.authorUsername
+        dateLabel.text = self.formatter.string(from: post.createdTime)
+        postImageView.image = post.image
+        numberOfLikesLabel.text = "Likes: \(post.likedByCount)"
+        descriptionLabel.text = post.description
+        isLikeButton.isHidden = false
+        addSubviews()
+        addGestureRecognizer()
+        setupLayout()
+    }
+    
     // Для начала добавим все наши созданные объекты на вью ячейки:
     private func addSubviews() {
         [avatarImageView,
@@ -215,6 +281,7 @@ private extension FeedCell {
         switch  post?.currentUserLikesThisPost {
         case true:
             post?.currentUserLikesThisPost = false
+            self.isLikeButton.tintColor = .lightGray
             DataProviders.shared.postsDataProvider.unlikePost(with: post!.id, queue: queue) { post in
                 if post == nil {
                     DispatchQueue.main.async {
@@ -222,13 +289,13 @@ private extension FeedCell {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.isLikeButton.tintColor = .lightGray
                         self.numberOfLikesLabel.text = "Likes: \(post!.likedByCount)"
                     }
                 }
             }
         case false:
             post?.currentUserLikesThisPost = true
+            self.isLikeButton.tintColor = .systemBlue
             DataProviders.shared.postsDataProvider.likePost(with: post!.id, queue: queue) { post in
                 if post == nil {
                     DispatchQueue.main.async {
@@ -236,7 +303,6 @@ private extension FeedCell {
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self.isLikeButton.tintColor = .systemBlue
                         self.numberOfLikesLabel.text = "Likes: \(post!.likedByCount)"
                     }
                 }
