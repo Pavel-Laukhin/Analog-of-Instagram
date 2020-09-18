@@ -138,9 +138,10 @@ extension FeedViewController: TransitionProtocol {
     
     func showProfile(userId: User.Identifier) {
         
-        if userId == currentUser.id {
+        if currentUser != nil && userId == currentUser.id {
+            
             navigationController?.tabBarController?.selectedIndex = 1
-//            navigationController?.tabBarController?.setViewControllers([self, ProfileViewController(user: currentUser, allPosts: self.allPosts)], animated: true)
+            
         } else {
             turnActivityOn()
             

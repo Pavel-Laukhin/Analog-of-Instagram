@@ -50,7 +50,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let queue = DispatchQueue.global(qos: .utility)
         var currentUser: User?
         DataProviders.shared.usersDataProvider.currentUser(queue: queue) { user in
-            guard let user = user else { return }
+            guard let user = user else {
+                print("AppDelegate: ERROR: currentUser not found")
+                return
+            }
             currentUser = user
         }
         
@@ -61,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Создаем контроллер с текущим юзером, настраиваем, передаем в навигейшн контроллер и обновляем навигейшн контроллер у табБар контроллера:
         guard let user = currentUser else { return true }
-        let profileViewController = ProfileViewController(user: user, allPosts: feedViewController.allPosts)
+        let profileViewController = ProfileViewController(user: user)
         profileNavigationController.viewControllers = [profileViewController]
         tabBarController.viewControllers?[1] = profileNavigationController
         

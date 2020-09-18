@@ -14,16 +14,15 @@ class ProfileViewController: UIViewController {
     
     var user: User?
     
-    /// Статус, определяющий, следит ли наш текущий юзер за данным юзером или нет
+    /// Дополнительный статус, определяющий, следит ли наш текущий юзер за данным юзером или нет
     var isFollowed: Bool?
-    
     var allPosts: [Post]? {
         didSet {
-            print("user: \(user?.username): ----------ProfileViewController: allPosts didSet")
+            print("user: \(user?.username): ProfileViewController: allPosts didSet")
         }
     }
     
-    
+    //TODO: перенести из геттера в дидСэт у allPosts:
     var postsOfUser: [Post]? {
         get {
             var tempArrayOfPosts = [Post]()
@@ -35,8 +34,9 @@ class ProfileViewController: UIViewController {
             return tempArrayOfPosts
         }
     }
-    
     private let scrollView = UIScrollView()
+    let topInset: CGFloat = 8
+    let collectionViewInset: CGFloat = 8
     
     // MARK: - Visual elements
     private var avatarImageView: UIImageView = {
@@ -89,20 +89,15 @@ class ProfileViewController: UIViewController {
         if allPosts == nil {
             button.isHidden = true
         }
-
         guard let user = user else {
-            button.isHidden = true
             return button
         }
-        print("user: \(user.username): followButton: user.currentUserFollowsThisUser = \(user.currentUserFollowsThisUser)")
         if user.currentUserFollowsThisUser {
             button.setTitle("Unfollow", for: .normal)
         } else {
             button.setTitle("Follow", for: .normal)
         }
-        
         button.addTarget(self, action: #selector(toFollowButtonTapped), for: .touchUpInside)
-        print("user: \(user.username): ----------ProfileViewController: followButton returned")
         return button
     }()
     
@@ -156,6 +151,7 @@ class ProfileViewController: UIViewController {
         // Если юзер передавался из FeedViewController, то он передавался со всеми постами. Тогда просто вырубаем экран загрузки. Если юзер передавался из AppDelegate (речь о currentUser), то он не содержит постов, поэтому на экране должен появиться индикатор активности при открытом ProfileViewControllere. После загрузки всех постов, коллекция перезагружается и выключается индикатор активности.
         if allPosts != nil {
             print("user: \(self.user?.username): -------------allPosts =! nil")
+            setUpScrollView()
             turnActivityOff()
         } else {
             print("user: \(self.user?.username): -------------allPosts == nil")
@@ -165,9 +161,10 @@ class ProfileViewController: UIViewController {
             DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
                 self.allPosts = posts
                 
-                // Перезагружаем коллекцию и выключаем индикатор активности
+                // Перезагружаем коллекцию и выключаем индикатор активности:
                 DispatchQueue.main.async {
                     self.collectionView.reloadData()
+                    self.setUpScrollView()
                     self.turnActivityOff()
                 }
             }
@@ -175,9 +172,7 @@ class ProfileViewController: UIViewController {
     }
     
     private func addSubviews() {
-//        print("user: \(user?.username): addSubviews")
         view.addSubview(scrollView)
-//        activityIndicatorShadowView.addSubview(activityIndicator)
         [avatarImageView,
          userFullNameLabel,
          followersButton,
@@ -190,9 +185,6 @@ class ProfileViewController: UIViewController {
     }
     
     private func setUpLayout() {
-//        print("user: \(user?.username): setUpLayout")
-        let topInset: CGFloat = 8
-        let collectionViewInset: CGFloat = 8
         
         scrollView.frame = CGRect(
             x: 0,
@@ -244,23 +236,30 @@ class ProfileViewController: UIViewController {
             width: view.bounds.width,
             height: view.bounds.height - topInset - avatarImageView.frame.height - collectionViewInset
         )
-        
-        let contentHeight = topInset + avatarImageView.frame.height + collectionViewInset + collectionView.collectionViewLayout.collectionViewContentSize.height
-        
-        scrollView.contentSize = CGSize(width: view.bounds.width, height: contentHeight)
 
-        let navBarMaxY = self.navigationController?.navigationBar.frame.maxY ?? 0
-        let tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 0
+        let navBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
+        let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
         
         activityIndicatorShadowView.frame = CGRect(
             x: 0,
             y: avatarImageView.frame.maxY + collectionViewInset,
             width: view.bounds.width,
-            height: view.bounds.height - navBarMaxY - avatarImageView.frame.maxY - collectionViewInset - tabBarHeight
+            height: view.bounds.height - navBarMaxY - topInset - avatarImageView.frame.maxY - collectionViewInset - tabBarHeight
         )
         
         activityIndicator.center = activityIndicatorShadowView.center
-
+    }
+    
+    private func setUpScrollView() {
+        let navBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
+        let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
+        let height = view.bounds.height - navBarMaxY - tabBarHeight + 1 // Добавление единицы включает "резиночку" там, где ее нет, когда размер скрол вью не выходит за пределы видимости
+        let contentHeight = topInset + avatarImageView.frame.height + collectionViewInset + collectionView.collectionViewLayout.collectionViewContentSize.height
+        if contentHeight < height {
+            scrollView.contentSize = CGSize(width: view.bounds.width, height: height)
+        } else {
+            scrollView.contentSize = CGSize(width: view.bounds.width, height: contentHeight)
+        }
     }
     
     // MARK: - Actions
