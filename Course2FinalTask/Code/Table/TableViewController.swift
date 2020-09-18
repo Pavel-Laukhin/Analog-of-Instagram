@@ -73,7 +73,7 @@ class TableViewController: UITableViewController {
         
         // Пушим контроллер с профилем пользователя:
         let user = users[indexPath.row]
-        navigationController?.pushViewController(ProfileViewController(user: user, isFollowed: user.currentUserFollowsThisUser), animated: true)
+        navigationController?.pushViewController(ProfileViewController(user: user), animated: true)
     }
     
     // Делаем так, чтобы подсветка строки не сразу исчезала, а с задержкой:

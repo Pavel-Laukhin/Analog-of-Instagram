@@ -42,8 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.makeKeyAndVisible()
         window?.rootViewController = tabBarController
+        window?.makeKeyAndVisible()
+        print("makeKeyAndVisible")
         
         // Загружаем информацию о текущем юзере
         let queue = DispatchQueue.global(qos: .utility)
@@ -60,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Создаем контроллер с текущим юзером, настраиваем, передаем в навигейшн контроллер и обновляем навигейшн контроллер у табБар контроллера:
         guard let user = currentUser else { return true }
-        let profileViewController = ProfileViewController(user: user)
+        let profileViewController = ProfileViewController(user: user, allPosts: feedViewController.allPosts)
         profileNavigationController.viewControllers = [profileViewController]
         tabBarController.viewControllers?[1] = profileNavigationController
         

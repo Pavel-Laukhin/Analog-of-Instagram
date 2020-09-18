@@ -16,23 +16,23 @@ class ProfileViewController: UIViewController {
     
     /// Статус, определяющий, следит ли наш текущий юзер за данным юзером или нет
     var isFollowed: Bool?
-//    {
-//        return user?.currentUserFollowsThisUser
-//    }
-
-    var postsCount: Int?  {
+    
+    var allPosts: [Post]? {
+        didSet {
+            print("user: \(user?.username): ----------ProfileViewController: allPosts didSet")
+        }
+    }
+    
+    
+    var postsOfUser: [Post]? {
         get {
-            guard let user = user else { return nil }
-            var count: Int?
-            DataProviders.shared.postsDataProvider.findPosts(by: user.id, queue: queue) { posts in
-                if posts != nil {
-                    count = posts!.count
+            var tempArrayOfPosts = [Post]()
+            allPosts?.forEach {
+                if $0.author == user?.id {
+                    tempArrayOfPosts.append($0)
                 }
             }
-            while count == nil {
-                ()
-            }
-            return count
+            return tempArrayOfPosts
         }
     }
     
@@ -77,27 +77,53 @@ class ProfileViewController: UIViewController {
         // 5.Возвращаем результат:
         return collectionView
     }()
-    private lazy var followButton: UIButton = {
+    private lazy var toFollowButton: UIButton = {
         let button = UIButton(type: .system)
+        button.backgroundColor = .systemBlue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 5
+        button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+        button.translatesAutoresizingMaskIntoConstraints = false
         
-        // Если ничего не известно про статус isFollowed, то значит это текущий юзер, и кнопку отображать не нужно
-        guard isFollowed != nil else {
+        // Если постов нет, то это текущий юзер и отображать кнопку не нужно... не прокатило... С фида при переходе кнопка-то появляется (((
+        if allPosts == nil {
+            button.isHidden = true
+        }
+
+        guard let user = user else {
             button.isHidden = true
             return button
         }
-        if isFollowed == false {
-            button.setTitle("Follow", for: .normal)
-        } else {
+        print("user: \(user.username): followButton: user.currentUserFollowsThisUser = \(user.currentUserFollowsThisUser)")
+        if user.currentUserFollowsThisUser {
             button.setTitle("Unfollow", for: .normal)
+        } else {
+            button.setTitle("Follow", for: .normal)
         }
-        button.addTarget(self, action: #selector(followButtonTapped), for: .touchUpInside)
+        
+        button.addTarget(self, action: #selector(toFollowButtonTapped), for: .touchUpInside)
+        print("user: \(user.username): ----------ProfileViewController: followButton returned")
         return button
     }()
     
+    /// Затемняющая вьюха, работающая вместе с индикатором активности
+    private lazy var activityIndicatorShadowView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0.7
+        view.isHidden = true
+        return view
+        }()
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .white)
+        indicator.isHidden = true
+        return indicator
+    }()
+    
     // Делаем инициализатор, который может принимать юзера:
-    init(user: User, isFollowed: Bool? = nil) {
+    init(user: User, allPosts: [Post]? = nil) {
         self.user = user
-        self.isFollowed = isFollowed
+        self.allPosts = allPosts
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -108,15 +134,16 @@ class ProfileViewController: UIViewController {
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad")
+        print("user: \(user?.username): viewDidLoad")
         view.backgroundColor = .white
         updateUI()
         addSubviews()
         setUpLayout()
+        allPostsHandler()
     }
     
     private func updateUI() {
-        print("updateUI")
+        print("user: \(user?.username): updateUI")
         guard let user = user else { return }
         navigationItem.title = user.username
         avatarImageView.image = user.avatar
@@ -125,20 +152,45 @@ class ProfileViewController: UIViewController {
         followingButton.setAttributedTitle(NSAttributedString(string: "Following: \(user.followsCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
     }
     
+    private func allPostsHandler() {
+        // Если юзер передавался из FeedViewController, то он передавался со всеми постами. Тогда просто вырубаем экран загрузки. Если юзер передавался из AppDelegate (речь о currentUser), то он не содержит постов, поэтому на экране должен появиться индикатор активности при открытом ProfileViewControllere. После загрузки всех постов, коллекция перезагружается и выключается индикатор активности.
+        if allPosts != nil {
+            print("user: \(self.user?.username): -------------allPosts =! nil")
+            turnActivityOff()
+        } else {
+            print("user: \(self.user?.username): -------------allPosts == nil")
+            turnActivityOn()
+            
+            // Загружаем посты:
+            DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
+                self.allPosts = posts
+                
+                // Перезагружаем коллекцию и выключаем индикатор активности
+                DispatchQueue.main.async {
+                    self.collectionView.reloadData()
+                    self.turnActivityOff()
+                }
+            }
+        }
+    }
+    
     private func addSubviews() {
-        print("addSubviews")
+//        print("user: \(user?.username): addSubviews")
         view.addSubview(scrollView)
+//        activityIndicatorShadowView.addSubview(activityIndicator)
         [avatarImageView,
          userFullNameLabel,
          followersButton,
          followingButton,
          collectionView,
-         followButton
+         toFollowButton,
+         activityIndicatorShadowView,
+         activityIndicator
             ].forEach { scrollView.addSubview($0) }
     }
     
     private func setUpLayout() {
-        print("setUpLayout")
+//        print("user: \(user?.username): setUpLayout")
         let topInset: CGFloat = 8
         let collectionViewInset: CGFloat = 8
         
@@ -181,13 +233,10 @@ class ProfileViewController: UIViewController {
             height: followingButton.frame.height
         )
         
-        followButton.sizeToFit()
-        followButton.frame = CGRect(
-            x: view.bounds.width - followButton.frame.width - 16,
-            y: topInset,
-            width: followButton.frame.width,
-            height: followButton.frame.height
-        )
+        NSLayoutConstraint.activate([
+            toFollowButton.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
+            toFollowButton.trailingAnchor.constraint(equalTo: followingButton.trailingAnchor)
+        ])
         
         collectionView.frame = CGRect(
             x: 0,
@@ -199,6 +248,19 @@ class ProfileViewController: UIViewController {
         let contentHeight = topInset + avatarImageView.frame.height + collectionViewInset + collectionView.collectionViewLayout.collectionViewContentSize.height
         
         scrollView.contentSize = CGSize(width: view.bounds.width, height: contentHeight)
+
+        let navBarMaxY = self.navigationController?.navigationBar.frame.maxY ?? 0
+        let tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 0
+        
+        activityIndicatorShadowView.frame = CGRect(
+            x: 0,
+            y: avatarImageView.frame.maxY + collectionViewInset,
+            width: view.bounds.width,
+            height: view.bounds.height - navBarMaxY - avatarImageView.frame.maxY - collectionViewInset - tabBarHeight
+        )
+        
+        activityIndicator.center = activityIndicatorShadowView.center
+
     }
     
     // MARK: - Actions
@@ -230,21 +292,62 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    @objc func followButtonTapped() {
-        if isFollowed == false {
-            followButton.setTitle("Follow", for: .normal)
-            followingButton.sizeToFit()
+    @objc func toFollowButtonTapped() {
+        guard let user = user else {
+            print("user: \(self.user?.username): toFollowButtonTapped: user not found")
+            return
+        }
+        if isFollowed ?? user.currentUserFollowsThisUser {
+            toFollowButton.setTitle("Follow", for: .normal)
+            DataProviders.shared.usersDataProvider.unfollow(user.id, queue: serialQueue) { user in
+                if user != nil {
+                    print("user: \(self.user?.username): Unfollowed in DataProvider")
+                } else {
+                    print("user: \(self.user?.username): nil in DataProvider")
+                }
+            }
+            isFollowed = false
         } else {
-            followButton.setTitle("Unfollow", for: .normal)
-            followingButton.sizeToFit()
+            toFollowButton.setTitle("Unfollow", for: .normal)
+            DataProviders.shared.usersDataProvider.follow(user.id, queue: serialQueue) { user in
+                if user != nil {
+                    print("user: \(self.user?.username): Followed in DataProvider")
+                } else {
+                    print("user: \(self.user?.username): nil in DataProvider")
+                }
+            }
+            isFollowed = true
         }
     }
     
 }
 
-//Добавляем глобальную очередь
+//Добавляем очереди
 extension ProfileViewController {
         
     var queue: DispatchQueue { DispatchQueue.global() }
+    var serialQueue: DispatchQueue { DispatchQueue(label: "serialQueue") }
+    
+}
+
+
+// ДОбавляем включениеи выключение индикатора активности:
+extension ProfileViewController {
+    
+    func turnActivityOn() {
+        print("user: \(user?.username): turnActivityOn")
+        // Установка активити индикатора и его фона:
+        activityIndicatorShadowView.isHidden = false
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+    
+    func turnActivityOff() {
+        print("user: \(user?.username): turnActivityOff")
+        // Установка активити индикатора и его фона:
+        activityIndicator.stopAnimating()
+        activityIndicatorShadowView.isHidden = true
+        activityIndicator.isHidden = true
+    }
     
 }

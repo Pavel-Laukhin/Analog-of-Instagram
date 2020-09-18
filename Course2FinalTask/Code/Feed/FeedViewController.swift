@@ -25,7 +25,17 @@ class FeedViewController: UIViewController {
         return collectionView
     }()
     
-    var postsCount: Int!
+    var allPosts: [Post]? {
+        didSet {
+            print("All posts has been set")
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                self.turnActivityOff()
+            }
+        }
+    }
+    
+    var currentUser: User!
     
     /// Затемняющая вьюха, работающая вместе с индикатором активности
     private lazy var activityIndicatorShadowView: UIView = {
@@ -45,15 +55,21 @@ class FeedViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("FeddView has been load")
         collectionView.backgroundColor = .white
         addSubviews()
         setUpSubviews()
+        turnActivityOn()
         
+        // Загружаем посты:
         DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
-            if let postsCount = posts?.count {
-                self.postsCount = postsCount
-            }
+            self.allPosts = posts
+        }
+        
+        // Находим текущего юзера:
+        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { user in
+            guard let user = user else { return }
+            self.currentUser = user
         }
     }
     
@@ -121,30 +137,34 @@ extension FeedViewController: TransitionProtocol {
     }
     
     func showProfile(userId: User.Identifier) {
-        turnActivityOn()
         
-        // Ищем пользователя:
-        DataProviders.shared.usersDataProvider.user(with: userId, queue: self.queue) { user in
+        if userId == currentUser.id {
+            navigationController?.tabBarController?.selectedIndex = 1
+//            navigationController?.tabBarController?.setViewControllers([self, ProfileViewController(user: currentUser, allPosts: self.allPosts)], animated: true)
+        } else {
+            turnActivityOn()
             
-            guard let user = user else {
+            // Ищем пользователя:
+            DataProviders.shared.usersDataProvider.user(with: userId, queue: self.queue) { user in
+                guard let user = user else {
+                    
+                    // Показываем алерт о неизвестной ошибке:
+                    DispatchQueue.main.async {
+                        self.turnActivityOff()
+                        Alert.showBasic(vc: self)
+                    }
+                    return
+                }
                 
-                // Показываем алерт о неизвестной ошибке:
+                // Показываем страницу юзера:
                 DispatchQueue.main.async {
                     self.turnActivityOff()
-                    Alert.showBasic(vc: self)
+                    self.navigationController?.pushViewController(ProfileViewController(user: user, allPosts: self.allPosts), animated: true)
                 }
-                return
-            }
-            
-            // Показываем страницу юзера:
-            DispatchQueue.main.async {
-                self.turnActivityOff()
-                self.navigationController?.pushViewController(ProfileViewController(user: user, isFollowed: user.currentUserFollowsThisUser), animated: true)
             }
         }
     }
-    
-    
+
 }
 
 // Добавляем глобальную очередь:
@@ -158,6 +178,7 @@ extension FeedViewController {
 extension FeedViewController {
     
     func turnActivityOn() {
+        print("turnActivityOn")
         // Установка активити индикатора и его фона:
         activityIndicatorShadowView.isHidden = false
         activityIndicator.isHidden = false
@@ -165,6 +186,7 @@ extension FeedViewController {
     }
     
     func turnActivityOff() {
+        print("turnActivityOff")
         // Установка активити индикатора и его фона:
         activityIndicator.stopAnimating()
         activityIndicatorShadowView.isHidden = true

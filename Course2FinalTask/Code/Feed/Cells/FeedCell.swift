@@ -15,63 +15,6 @@ enum TransitionState {
 
 final class FeedCell: UICollectionViewCell {
     
-    /// Затемняющая вьюха, работающая вместе с индикатором активности
-    private lazy var activityIndicatorShadowView: UIView = {
-        let view = UIView()
-        view.frame = CGRect(
-            x: 0,
-            y: 0,
-            width: contentView.bounds.width,
-            height: contentView.bounds.height
-        )
-        view.backgroundColor = .black
-        view.alpha = 0.7
-        return view
-    }()
-    
-    private lazy var activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .white)
-        indicator.center = contentView.center
-        return indicator
-    }()
-    
-    var indexOfCell: Int? {
-        didSet {
-            
-            // Обнуление визуальных данных ячейки:
-            postImageView.image = nil
-            avatarImageView.image = nil
-            authorNameLabel.text = ""
-            dateLabel.text = ""
-            numberOfLikesLabel.text = ""
-            isLikeButton.isHidden = true
-            descriptionLabel.text = ""
-            
-            
-            // Установка активити индикатора и его фона:
-            [activityIndicatorShadowView, activityIndicator].forEach {contentView.addSubview($0)}
-            activityIndicatorShadowView.isHidden = false
-            activityIndicator.isHidden = false
-            activityIndicator.startAnimating()
-            
-            
-            // Достаем пост из провайдера:
-            guard let indexOfCell = indexOfCell else { return }
-            DataProviders.shared.postsDataProvider.feed(queue: queue) { (postsArray: [Post]?) -> Void in
-                if let post = postsArray?[indexOfCell] {
-                    
-                    // Проверяем, не поменялся ли наш индекс. Если индекс не изменился, то обновляем UI. Это нужно, чтобы запоздавшие задачи из очереди не заменили нам текущий контент.
-                    if indexOfCell == self.indexOfCell {
-                        self.post = post
-                        DispatchQueue.main.async {
-                            self.updateUI()
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
     var delegate: TransitionProtocol?
     
     // Реализация перехода с помощью колбэка (чисто для себя потестить, как это работает):
@@ -85,7 +28,19 @@ final class FeedCell: UICollectionViewCell {
         return formatter
     }
     
-    var post: Post?
+    var post: Post? {
+        didSet {
+            
+            // Установка кнопки isLike:
+            addIsLikeButton()
+            
+            // Обновляем интерфейс:
+            updateUI()
+        }
+    }
+    
+    var isCurrentUserLikesThisPost: Bool?
+    
     
     // MARK: - Visual properties
     private var avatarImageView: UIImageView = {
@@ -117,19 +72,21 @@ final class FeedCell: UICollectionViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    private lazy var isLikeButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
-        if let isLike = post?.currentUserLikesThisPost {
-            if isLike {
-                button.tintColor = .systemBlue
-            } else {
-                button.tintColor = .lightGray
-            }
-        }
-        button.addTarget(self, action: #selector(isLikeButtonPressed), for: .touchUpInside)
-        return button
-    }()
+    private weak var isLikeButton: UIButton?// = {
+//        let button = UIButton(type: .system)
+//        button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
+//        if let isLike = post?.currentUserLikesThisPost {
+//            if isLike {
+//                button.tintColor = .systemBlue
+//                isCurrentUserLikesThisPost = true
+//            } else {
+//                button.tintColor = .lightGray
+//                isCurrentUserLikesThisPost = false
+//            }
+//        }
+//        button.addTarget(self, action: #selector(isLikeButtonPressed), for: .touchUpInside)
+//        return button
+//    }()
     private var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
@@ -158,17 +115,40 @@ final class FeedCell: UICollectionViewCell {
         return tgr
     }()
     
-}
-
-private extension FeedCell {
+    deinit {
+        
+        // Обнуление визуальных данных ячейки:
+        postImageView.image = nil
+        avatarImageView.image = nil
+        authorNameLabel.text = ""
+        dateLabel.text = ""
+        numberOfLikesLabel.text = ""
+//        isLikeButton.isHidden = true
+        descriptionLabel.text = ""
+        
+        // Обнуление данных ячейки:
+        post = nil
+    }
+    
     // MARK: - Life cycle
+    private func addIsLikeButton() {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
+        if let post = post {
+            if post.currentUserLikesThisPost {
+                button.tintColor = .systemBlue
+                isCurrentUserLikesThisPost = true
+            } else {
+                button.tintColor = .lightGray
+                isCurrentUserLikesThisPost = false
+            }
+        }
+        button.addTarget(self, action: #selector(isLikeButtonPressed), for: .touchUpInside)
+        isLikeButton = button
+        contentView.addSubview(isLikeButton!)
+    }
     
     private func updateUI() {
-        
-        // Выключаетм и убираем активити индикатор с его затемняющей вью.
-        activityIndicatorShadowView.isHidden = true
-        activityIndicator.stopAnimating()
-        activityIndicator.isHidden = true
         
         guard let post = self.post else { return }
         avatarImageView.image = post.authorAvatar
@@ -177,7 +157,6 @@ private extension FeedCell {
         postImageView.image = post.image
         numberOfLikesLabel.text = "Likes: \(post.likedByCount)"
         descriptionLabel.text = post.description
-        isLikeButton.isHidden = false
         addSubviews()
         addGestureRecognizer()
         setupLayout()
@@ -190,7 +169,6 @@ private extension FeedCell {
          dateLabel,
          postImageView,
          numberOfLikesLabel,
-         isLikeButton,
          descriptionLabel,
          bigLikeImageView
             ].forEach { contentView.addSubview($0) }
@@ -249,6 +227,12 @@ private extension FeedCell {
             height: contentView.bounds.width
         )
         
+        NSLayoutConstraint.activate([
+            bigLikeImageView.centerXAnchor.constraint(equalTo: postImageView.centerXAnchor, constant: 0),
+            bigLikeImageView.centerYAnchor.constraint(equalTo: postImageView.centerYAnchor, constant: 0)
+        ])
+        
+        guard let isLikeButton = isLikeButton  else { return }
         isLikeButton.frame = CGRect(
             x: contentView.bounds.width - 15 - 44,
             y: postImageView.frame.maxY,
@@ -269,19 +253,15 @@ private extension FeedCell {
             height: descriptionLabel.frame.height
         )
         descriptionLabel.sizeToFit()
-        
-        NSLayoutConstraint.activate([
-            bigLikeImageView.centerXAnchor.constraint(equalTo: postImageView.centerXAnchor, constant: 0),
-            bigLikeImageView.centerYAnchor.constraint(equalTo: postImageView.centerYAnchor, constant: 0)
-        ])
     }
     
     // MARK: - Actions
     @objc func isLikeButtonPressed() {
-        switch  post?.currentUserLikesThisPost {
+        switch  isCurrentUserLikesThisPost {
         case true:
-            post?.currentUserLikesThisPost = false
-            self.isLikeButton.tintColor = .lightGray
+            guard let isLikeButton = isLikeButton else { return }
+            isCurrentUserLikesThisPost = false
+            isLikeButton.tintColor = .lightGray
             DataProviders.shared.postsDataProvider.unlikePost(with: post!.id, queue: queue) { post in
                 if post == nil {
                     DispatchQueue.main.async {
@@ -294,8 +274,9 @@ private extension FeedCell {
                 }
             }
         case false:
-            post?.currentUserLikesThisPost = true
-            self.isLikeButton.tintColor = .systemBlue
+            guard let isLikeButton = isLikeButton else { return }
+            isCurrentUserLikesThisPost = true
+            isLikeButton.tintColor = .systemBlue
             DataProviders.shared.postsDataProvider.likePost(with: post!.id, queue: queue) { post in
                 if post == nil {
                     DispatchQueue.main.async {
@@ -308,7 +289,7 @@ private extension FeedCell {
                 }
             }
         default:
-            ()
+            print("isLikeButtonPressed: ERROR: isCurrentUserLikesThisPost = nil")
         }
     }
     

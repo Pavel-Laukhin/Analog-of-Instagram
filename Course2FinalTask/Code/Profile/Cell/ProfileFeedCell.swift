@@ -32,6 +32,8 @@ class ProfileFeedCell: UICollectionViewCell {
         return indicator
     }()
     
+    var posts: [Post]?
+    
     var post: Post? {
         didSet {
             guard let post = post else { return }

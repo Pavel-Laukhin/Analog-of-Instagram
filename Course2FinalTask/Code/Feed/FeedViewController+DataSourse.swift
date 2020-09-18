@@ -12,10 +12,11 @@ import DataProvider
 extension FeedViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        while postsCount == nil {
-            ()
-        }
-        return postsCount!
+        print("Fedd DataSource entered")
+//        while allPosts == nil {
+//            ()
+//        }
+        return allPosts?.count ?? 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -24,7 +25,7 @@ extension FeedViewController: UICollectionViewDataSource {
         // Кастомизируем ячейку. Добавляю цвет фона и передаю пост:
         cell.backgroundColor = .white
         
-        cell.indexOfCell = indexPath.item
+        cell.post = allPosts?[indexPath.item]
         
         cell.delegate = self
         cell.callback = { [weak self] authorId in
@@ -33,7 +34,7 @@ extension FeedViewController: UICollectionViewDataSource {
                 if let user = user {
                     DispatchQueue.main.async {
                         self?.turnActivityOff()
-                        self?.navigationController?.pushViewController(ProfileViewController(user: user, isFollowed: user.currentUserFollowsThisUser), animated: true)
+                        self?.navigationController?.pushViewController(ProfileViewController(user: user), animated: true)
                     }
                 } else {
                     DispatchQueue.main.async {
