@@ -9,9 +9,9 @@
 import UIKit
 
 extension FilterViewController: UICollectionViewDelegateFlowLayout {
-    
+        
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 120, height: 80)
+        return CGSize(width: 120, height: 87)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -20,15 +20,15 @@ extension FilterViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        // Снимаем рамки выделения у всех видимых ячеек:
-        collectionView.visibleCells.forEach {
-            $0.layer.borderWidth = 0
-        }
-        
         // Устанавливаем рамку у текущей ячейки:
-        let cell = collectionView.cellForItem(at: indexPath)
-        cell?.layer.borderWidth = 2.0
-        cell?.layer.borderColor = UIColor.gray.cgColor
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            cell.layer.borderWidth = 3.0
+            cell.layer.borderColor = UIColor.gray.cgColor
+            cell.layer.cornerRadius = 10.0
+            cell.layer.masksToBounds = true
+            selectedItemNumber = indexPath.item
+            collectionView.reloadData()
+        }
     }
     
 }

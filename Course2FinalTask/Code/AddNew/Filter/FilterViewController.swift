@@ -20,9 +20,11 @@ final class FilterViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(FilterViewCell.self, forCellWithReuseIdentifier: String(describing: FilterViewCell.self))
-        collectionView.backgroundColor = .red
+        collectionView.backgroundColor = .white
         return collectionView
     }()
+    var selectedItemNumber: Int = 0
+    let filters = Filters()
     
     init(image: UIImage, thumbnailImage: UIImage) {
         self.image = image
@@ -53,9 +55,17 @@ final class FilterViewController: UIViewController {
             x: 0,
             y: imageView.frame.maxY + 16,
             width: view.frame.width,
-            height: 80
+            height: 87
         )
         view.backgroundColor = .white
+    }
+    
+}
+
+extension FilterViewController: AbleToReloadCollectionViewData {
+    
+    func reloadData() {
+        collectionView.reloadData()
     }
     
 }
