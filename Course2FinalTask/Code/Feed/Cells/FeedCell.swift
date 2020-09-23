@@ -69,24 +69,9 @@ final class FeedCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .black
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    private weak var isLikeButton: UIButton?// = {
-//        let button = UIButton(type: .system)
-//        button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
-//        if let isLike = post?.currentUserLikesThisPost {
-//            if isLike {
-//                button.tintColor = .systemBlue
-//                isCurrentUserLikesThisPost = true
-//            } else {
-//                button.tintColor = .lightGray
-//                isCurrentUserLikesThisPost = false
-//            }
-//        }
-//        button.addTarget(self, action: #selector(isLikeButtonPressed), for: .touchUpInside)
-//        return button
-//    }()
+    private weak var isLikeButton: UIButton?
     private var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
@@ -98,7 +83,6 @@ final class FeedCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "bigLike")
         imageView.alpha = 0
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -227,10 +211,8 @@ final class FeedCell: UICollectionViewCell {
             height: contentView.bounds.width
         )
         
-        NSLayoutConstraint.activate([
-            bigLikeImageView.centerXAnchor.constraint(equalTo: postImageView.centerXAnchor, constant: 0),
-            bigLikeImageView.centerYAnchor.constraint(equalTo: postImageView.centerYAnchor, constant: 0)
-        ])
+        bigLikeImageView.sizeToFit()
+        bigLikeImageView.center = postImageView.center
         
         guard let isLikeButton = isLikeButton  else { return }
         isLikeButton.frame = CGRect(
@@ -240,10 +222,14 @@ final class FeedCell: UICollectionViewCell {
             height: 44
         )
         
-        NSLayoutConstraint.activate([
-            numberOfLikesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            numberOfLikesLabel.centerYAnchor.constraint(equalTo: isLikeButton.centerYAnchor, constant: 0)
-        ])
+        numberOfLikesLabel.sizeToFit()
+        numberOfLikesLabel.frame = CGRect(
+            x: 15,
+            y: 0,
+            width: numberOfLikesLabel.frame.width,
+            height: numberOfLikesLabel.frame.height
+        )
+        numberOfLikesLabel.center.y = isLikeButton.center.y
         
         descriptionLabel.sizeToFit()
         descriptionLabel.frame = CGRect(
@@ -270,6 +256,7 @@ final class FeedCell: UICollectionViewCell {
                 } else {
                     DispatchQueue.main.async {
                         self.numberOfLikesLabel.text = "Likes: \(post!.likedByCount)"
+                        self.numberOfLikesLabel.sizeToFit()
                     }
                 }
             }
@@ -285,6 +272,7 @@ final class FeedCell: UICollectionViewCell {
                 } else {
                     DispatchQueue.main.async {
                         self.numberOfLikesLabel.text = "Likes: \(post!.likedByCount)"
+                        self.numberOfLikesLabel.sizeToFit()
                     }
                 }
             }

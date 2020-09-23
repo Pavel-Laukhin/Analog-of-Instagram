@@ -9,16 +9,20 @@
 import UIKit
 import DataProvider
 
-class TableViewController: UITableViewController {
+final class TableViewController: UITableViewController {
     
     var lastSelectedRow: IndexPath?
     var currentlySelectedRow: IndexPath?
     
     var users: [User]
+    var currentUser: User?
+    var allPosts: [Post]?
     
     // Настраиваем инициализатор, чтобы при инициализации передавался массив юзеров. Без этого массива нам табличный контроллер не нужен:
-    init(users: [User], title: String) {
+    init(users: [User], title: String, allPosts: [Post]?, currentUser: User? = nil) {
         self.users = users
+        self.allPosts = allPosts
+        self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
         self.title = title
     }
@@ -73,7 +77,7 @@ class TableViewController: UITableViewController {
         
         // Пушим контроллер с профилем пользователя:
         let user = users[indexPath.row]
-        navigationController?.pushViewController(ProfileViewController(user: user), animated: true)
+        navigationController?.pushViewController(ProfileViewController(user: user, allPosts: allPosts, currentUser: currentUser), animated: true)
     }
     
     // Делаем так, чтобы подсветка строки не сразу исчезала, а с задержкой:

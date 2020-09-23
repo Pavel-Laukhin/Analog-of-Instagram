@@ -10,15 +10,14 @@ import UIKit
 import DataProvider
 
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
     var user: User?
+    var currentUser: User?
     
     /// Дополнительный статус, определяющий, следит ли наш текущий юзер за данным юзером или нет
-    var isFollowed: Bool?
     var allPosts: [Post]? {
         didSet {
-            print("user: \(user?.username): ProfileViewController: allPosts didSet")
         }
     }
     
@@ -26,7 +25,8 @@ class ProfileViewController: UIViewController {
     var postsOfUser: [Post]? {
         get {
             var tempArrayOfPosts = [Post]()
-            allPosts?.forEach {
+            guard let allPosts = allPosts else { return [] }
+            allPosts.forEach {
                 if $0.author == user?.id {
                     tempArrayOfPosts.append($0)
                 }
@@ -34,9 +34,10 @@ class ProfileViewController: UIViewController {
             return tempArrayOfPosts
         }
     }
+    private var isFollowed: Bool?
     private let scrollView = UIScrollView()
-    let topInset: CGFloat = 8
-    let collectionViewInset: CGFloat = 8
+    private let topInset: CGFloat = 8
+    private let collectionViewInset: CGFloat = 8
     
     // MARK: - Visual elements
     private var avatarImageView: UIImageView = {
@@ -86,10 +87,12 @@ class ProfileViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         // Если постов нет, то это текущий юзер и отображать кнопку не нужно... не прокатило... С фида при переходе кнопка-то появляется (((
-        if allPosts == nil {
+        guard allPosts != nil else {
             button.isHidden = true
+            return button
         }
-        guard let user = user else {
+        guard currentUser?.id != user?.id, let user = user else {
+            button.isHidden = true
             return button
         }
         if user.currentUserFollowsThisUser {
@@ -116,9 +119,10 @@ class ProfileViewController: UIViewController {
     }()
     
     // Делаем инициализатор, который может принимать юзера:
-    init(user: User, allPosts: [Post]? = nil) {
+    init(user: User, allPosts: [Post]? = nil, currentUser: User? = nil) {
         self.user = user
         self.allPosts = allPosts
+        self.currentUser = currentUser
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -129,7 +133,6 @@ class ProfileViewController: UIViewController {
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("user: \(user?.username): viewDidLoad")
         view.backgroundColor = .white
         updateUI()
         addSubviews()
@@ -138,7 +141,6 @@ class ProfileViewController: UIViewController {
     }
     
     private func updateUI() {
-        print("user: \(user?.username): updateUI")
         guard let user = user else { return }
         navigationItem.title = user.username
         avatarImageView.image = user.avatar
@@ -150,16 +152,16 @@ class ProfileViewController: UIViewController {
     private func allPostsHandler() {
         // Если юзер передавался из FeedViewController, то он передавался со всеми постами. Тогда просто вырубаем экран загрузки. Если юзер передавался из AppDelegate (речь о currentUser), то он не содержит постов, поэтому на экране должен появиться индикатор активности при открытом ProfileViewControllere. После загрузки всех постов, коллекция перезагружается и выключается индикатор активности.
         if allPosts != nil {
-            print("user: \(self.user?.username): -------------allPosts =! nil")
             setUpScrollView()
             turnActivityOff()
         } else {
-            print("user: \(self.user?.username): -------------allPosts == nil")
             turnActivityOn()
             
             // Загружаем посты:
             DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
-                self.allPosts = posts
+                if let posts = posts {
+                    self.allPosts = posts
+                }
                 
                 // Перезагружаем коллекцию и выключаем индикатор активности:
                 DispatchQueue.main.async {
@@ -267,7 +269,7 @@ class ProfileViewController: UIViewController {
         DataProviders.shared.usersDataProvider.usersFollowedByUser(with: user!.id, queue: queue) { users in
             if users != nil {
                 DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(TableViewController(users: users!, title: "Following"), animated: true)
+                    self.navigationController?.pushViewController(TableViewController(users: users!, title: "Following", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             } else {
                 DispatchQueue.main.async {
@@ -281,7 +283,7 @@ class ProfileViewController: UIViewController {
         DataProviders.shared.usersDataProvider.usersFollowedByUser(with: user!.id, queue: queue) { users in
             if users != nil {
                 DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(TableViewController(users: users!, title: "Followers"), animated: true)
+                    self.navigationController?.pushViewController(TableViewController(users: users!, title: "Followers", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             } else {
                 DispatchQueue.main.async {
@@ -293,16 +295,15 @@ class ProfileViewController: UIViewController {
     
     @objc func toFollowButtonTapped() {
         guard let user = user else {
-            print("user: \(self.user?.username): toFollowButtonTapped: user not found")
             return
         }
         if isFollowed ?? user.currentUserFollowsThisUser {
             toFollowButton.setTitle("Follow", for: .normal)
             DataProviders.shared.usersDataProvider.unfollow(user.id, queue: serialQueue) { user in
                 if user != nil {
-                    print("user: \(self.user?.username): Unfollowed in DataProvider")
+                    print("user: \(String(describing: self.user?.username)): Unfollowed in DataProvider")
                 } else {
-                    print("user: \(self.user?.username): nil in DataProvider")
+                    print("user: \(String(describing: self.user?.username)): nil in DataProvider")
                 }
             }
             isFollowed = false
@@ -310,9 +311,9 @@ class ProfileViewController: UIViewController {
             toFollowButton.setTitle("Unfollow", for: .normal)
             DataProviders.shared.usersDataProvider.follow(user.id, queue: serialQueue) { user in
                 if user != nil {
-                    print("user: \(self.user?.username): Followed in DataProvider")
+                    print("user: \(String(describing: self.user?.username)): Followed in DataProvider")
                 } else {
-                    print("user: \(self.user?.username): nil in DataProvider")
+                    print("user: \(String(describing: self.user?.username)): nil in DataProvider")
                 }
             }
             isFollowed = true
@@ -334,7 +335,6 @@ extension ProfileViewController {
 extension ProfileViewController {
     
     func turnActivityOn() {
-        print("user: \(user?.username): turnActivityOn")
         // Установка активити индикатора и его фона:
         activityIndicatorShadowView.isHidden = false
         activityIndicator.isHidden = false
@@ -342,7 +342,6 @@ extension ProfileViewController {
     }
     
     func turnActivityOff() {
-        print("user: \(user?.username): turnActivityOff")
         // Установка активити индикатора и его фона:
         activityIndicator.stopAnimating()
         activityIndicatorShadowView.isHidden = true

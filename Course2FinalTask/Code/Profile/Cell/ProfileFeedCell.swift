@@ -9,35 +9,11 @@
 import UIKit
 import DataProvider
 
-class ProfileFeedCell: UICollectionViewCell {
-    
-    /// Затемняющая вьюха, работающая вместе с индикатором активности
-    private lazy var activityIndicatorShadowView: UIView = {
-        let view = UIView()
-        view.frame = CGRect(
-            x: 0,
-            y: 0,
-            width: contentView.bounds.width,
-            height: contentView.bounds.height
-        )
-        view.backgroundColor = .black
-        view.alpha = 0.7
-        view.frame = contentView.bounds
-        return view
-    }()
-    
-    private lazy var activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .white)
-        indicator.center = contentView.center
-        return indicator
-    }()
-    
-    var posts: [Post]?
-    
+final class ProfileFeedCell: UICollectionViewCell {
+        
     var post: Post? {
         didSet {
             guard let post = post else { return }
-            turnActivityOff()
             postImageView.image = post.image
             addSubviews()
             setupLayout()
@@ -56,27 +32,6 @@ class ProfileFeedCell: UICollectionViewCell {
     
     private func setupLayout() {
         postImageView.frame = contentView.bounds
-    }
-    
-}
-
-
-// ДОбавляем включениеи выключение индикатора активности:
-extension ProfileFeedCell {
-    
-    func turnActivityOn() {
-        [activityIndicatorShadowView,
-         activityIndicator
-            ].forEach { contentView.addSubview($0) }
-        activityIndicatorShadowView.isHidden = false
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
-    }
-    
-    func turnActivityOff() {
-        activityIndicator.stopAnimating()
-        activityIndicatorShadowView.isHidden = true
-        activityIndicator.isHidden = true
     }
     
 }

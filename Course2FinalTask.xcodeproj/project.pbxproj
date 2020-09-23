@@ -11,6 +11,14 @@
 		7484B05520441FD000BDE1A6 /* DataProvider.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7484B05320441FD000BDE1A6 /* DataProvider.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		74B79258202B3254006BCB41 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B79257202B3254006BCB41 /* AppDelegate.swift */; };
 		74B7925F202B3254006BCB41 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74B7925E202B3254006BCB41 /* Assets.xcassets */; };
+		E91E5D3E2518AD4000A15439 /* NewPostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D3D2518AD4000A15439 /* NewPostViewController.swift */; };
+		E91E5D402518F3AB00A15439 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D3F2518F3AB00A15439 /* FilterViewController.swift */; };
+		E91E5D4425190E7400A15439 /* NewPostViewController+DelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D4325190E7400A15439 /* NewPostViewController+DelegateFlowLayout.swift */; };
+		E91E5D6A251A818D00A15439 /* FilterViewController+DelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D69251A818D00A15439 /* FilterViewController+DelegateFlowLayout.swift */; };
+		E91E5D6C251A824200A15439 /* FilterViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D6B251A824200A15439 /* FilterViewCell.swift */; };
+		E91E5D6E251A858B00A15439 /* FilterViewController+DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D6D251A858B00A15439 /* FilterViewController+DataSource.swift */; };
+		E91E5D70251A85E900A15439 /* Filters.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D6F251A85E900A15439 /* Filters.swift */; };
+		E92A49612515B5AC00541921 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A49602515B5AC00541921 /* TabBarController.swift */; };
 		E941B69024F84CCA008701E3 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E941B68F24F84CCA008701E3 /* Alert.swift */; };
 		E968F75324AFAB8300BFAC70 /* LayoutConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E968F75224AFAB8300BFAC70 /* LayoutConstants.swift */; };
 		E968F75624B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E968F75524B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift */; };
@@ -46,6 +54,14 @@
 		74B79257202B3254006BCB41 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74B7925E202B3254006BCB41 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		74B79263202B3254006BCB41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E91E5D3D2518AD4000A15439 /* NewPostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPostViewController.swift; sourceTree = "<group>"; };
+		E91E5D3F2518F3AB00A15439 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
+		E91E5D4325190E7400A15439 /* NewPostViewController+DelegateFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NewPostViewController+DelegateFlowLayout.swift"; sourceTree = "<group>"; };
+		E91E5D69251A818D00A15439 /* FilterViewController+DelegateFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterViewController+DelegateFlowLayout.swift"; sourceTree = "<group>"; };
+		E91E5D6B251A824200A15439 /* FilterViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewCell.swift; sourceTree = "<group>"; };
+		E91E5D6D251A858B00A15439 /* FilterViewController+DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterViewController+DataSource.swift"; sourceTree = "<group>"; };
+		E91E5D6F251A85E900A15439 /* Filters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filters.swift; sourceTree = "<group>"; };
+		E92A49602515B5AC00541921 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		E941B68F24F84CCA008701E3 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		E968F75224AFAB8300BFAC70 /* LayoutConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutConstants.swift; sourceTree = "<group>"; };
 		E968F75524B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewController+DelegateFlowLayout.swift"; sourceTree = "<group>"; };
@@ -105,6 +121,8 @@
 			children = (
 				74B79257202B3254006BCB41 /* AppDelegate.swift */,
 				E941B68F24F84CCA008701E3 /* Alert.swift */,
+				E91E5D3C2518ABA900A15439 /* AddNew */,
+				E92A495F2515B57400541921 /* TabBar */,
 				E968F75424B0B70C00BFAC70 /* Feed */,
 				E9BAEDBE24B1DA3A00B66E57 /* Profile */,
 				E9A23D7D24B2E6150017BB7E /* Table */,
@@ -126,6 +144,44 @@
 				74B79263202B3254006BCB41 /* Info.plist */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E91E5D3C2518ABA900A15439 /* AddNew */ = {
+			isa = PBXGroup;
+			children = (
+				E91E5D71251B4F5800A15439 /* NewPost */,
+				E91E5D72251B4F6700A15439 /* Filter */,
+				E91E5D6F251A85E900A15439 /* Filters.swift */,
+			);
+			path = AddNew;
+			sourceTree = "<group>";
+		};
+		E91E5D71251B4F5800A15439 /* NewPost */ = {
+			isa = PBXGroup;
+			children = (
+				E91E5D3D2518AD4000A15439 /* NewPostViewController.swift */,
+				E91E5D4325190E7400A15439 /* NewPostViewController+DelegateFlowLayout.swift */,
+			);
+			path = NewPost;
+			sourceTree = "<group>";
+		};
+		E91E5D72251B4F6700A15439 /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				E91E5D3F2518F3AB00A15439 /* FilterViewController.swift */,
+				E91E5D69251A818D00A15439 /* FilterViewController+DelegateFlowLayout.swift */,
+				E91E5D6D251A858B00A15439 /* FilterViewController+DataSource.swift */,
+				E91E5D6B251A824200A15439 /* FilterViewCell.swift */,
+			);
+			path = Filter;
+			sourceTree = "<group>";
+		};
+		E92A495F2515B57400541921 /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				E92A49602515B5AC00541921 /* TabBarController.swift */,
+			);
+			path = TabBar;
 			sourceTree = "<group>";
 		};
 		E968F75424B0B70C00BFAC70 /* Feed */ = {
@@ -251,18 +307,26 @@
 			files = (
 				E9764D4224AE529B0073C8E7 /* ProfileViewController.swift in Sources */,
 				E968F75324AFAB8300BFAC70 /* LayoutConstants.swift in Sources */,
+				E91E5D6E251A858B00A15439 /* FilterViewController+DataSource.swift in Sources */,
 				E9764D4624AE67F20073C8E7 /* FeedCell.swift in Sources */,
+				E91E5D402518F3AB00A15439 /* FilterViewController.swift in Sources */,
+				E91E5D6C251A824200A15439 /* FilterViewCell.swift in Sources */,
+				E92A49612515B5AC00541921 /* TabBarController.swift in Sources */,
+				E91E5D6A251A818D00A15439 /* FilterViewController+DelegateFlowLayout.swift in Sources */,
 				E9A23D7C24B208E20017BB7E /* ProfileViewController+Delegate.swift in Sources */,
+				E91E5D3E2518AD4000A15439 /* NewPostViewController.swift in Sources */,
 				E9764D4024AE52620073C8E7 /* FeedViewController.swift in Sources */,
 				74B79258202B3254006BCB41 /* AppDelegate.swift in Sources */,
 				E941B69024F84CCA008701E3 /* Alert.swift in Sources */,
 				E9A23D7F24B2E6400017BB7E /* TableViewController.swift in Sources */,
 				E9A23D8324B319840017BB7E /* FeedCell(Draft).swift in Sources */,
+				E91E5D70251A85E900A15439 /* Filters.swift in Sources */,
 				E9A23D7A24B2045A0017BB7E /* ProfileFeedCell.swift in Sources */,
 				E968F75624B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift in Sources */,
 				E9A23D8124B2E9580017BB7E /* TableViewCell.swift in Sources */,
 				E9764D4424AE65D30073C8E7 /* FeedViewController+DataSourse.swift in Sources */,
 				E9A23D7824B1F3BD0017BB7E /* ProfileViewController+DataSource.swift in Sources */,
+				E91E5D4425190E7400A15439 /* NewPostViewController+DelegateFlowLayout.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

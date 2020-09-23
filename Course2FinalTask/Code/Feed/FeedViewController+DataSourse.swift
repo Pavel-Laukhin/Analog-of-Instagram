@@ -12,10 +12,6 @@ import DataProvider
 extension FeedViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("Fedd DataSource entered")
-//        while allPosts == nil {
-//            ()
-//        }
         return allPosts?.count ?? 1
     }
     
@@ -34,7 +30,9 @@ extension FeedViewController: UICollectionViewDataSource {
                 if let user = user {
                     DispatchQueue.main.async {
                         self?.turnActivityOff()
-                        self?.navigationController?.pushViewController(ProfileViewController(user: user), animated: true)
+                        if let allPosts = self?.allPosts {
+                            self?.navigationController?.pushViewController(ProfileViewController(user: user, allPosts: allPosts), animated: true)
+                        }
                     }
                 } else {
                     DispatchQueue.main.async {
@@ -47,6 +45,5 @@ extension FeedViewController: UICollectionViewDataSource {
         
         return cell
     }
-    
     
 }

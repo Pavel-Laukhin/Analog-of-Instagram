@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class Alert {
+final class Alert {
     
     /** Создает базовый алерт
     - parameters:

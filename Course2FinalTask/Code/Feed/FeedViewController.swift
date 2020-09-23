@@ -9,8 +9,8 @@
 import UIKit
 import DataProvider
 
-class FeedViewController: UIViewController {
-        
+final class FeedViewController: UIViewController {
+    
     private lazy var collectionView: UICollectionView = {
         // 1. Делаем дефолтный макет, иначе наша коллекшн вью не сможет понять, как ей отрисовывать наши ячейки на экране:
         let layout = UICollectionViewFlowLayout()
@@ -27,7 +27,6 @@ class FeedViewController: UIViewController {
     
     var allPosts: [Post]? {
         didSet {
-            print("All posts has been set")
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
                 self.turnActivityOff()
@@ -36,6 +35,7 @@ class FeedViewController: UIViewController {
     }
     
     var currentUser: User!
+    let dispatchGroup = DispatchGroup()
     
     /// Затемняющая вьюха, работающая вместе с индикатором активности
     private lazy var activityIndicatorShadowView: UIView = {
@@ -55,21 +55,29 @@ class FeedViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("FeddView has been load")
         collectionView.backgroundColor = .white
         addSubviews()
         setUpSubviews()
         turnActivityOn()
         
         // Загружаем посты:
+        dispatchGroup.enter()
         DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
             self.allPosts = posts
+            self.dispatchGroup.leave()
         }
         
         // Находим текущего юзера:
+        dispatchGroup.enter()
         DataProviders.shared.usersDataProvider.currentUser(queue: queue) { user in
-            guard let user = user else { return }
+            guard let user = user else {
+                Alert.showBasic(vc: self)
+                print("Current user returned as nil")
+                self.dispatchGroup.leave()
+                return
+            }
             self.currentUser = user
+            self.dispatchGroup.leave()
         }
     }
     
@@ -130,20 +138,19 @@ extension FeedViewController: TransitionProtocol {
                 // Показываем таблицу с юзерами:
                 DispatchQueue.main.async {
                     self.turnActivityOff()
-                    self.navigationController?.pushViewController(TableViewController(users: arrayOfUsers!, title: "Likes"), animated: true)
+                    self.navigationController?.pushViewController(TableViewController(users: arrayOfUsers!, title: "Likes", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             }
         }
     }
     
     func showProfile(userId: User.Identifier) {
-        
-        if currentUser != nil && userId == currentUser.id {
-            
-            navigationController?.tabBarController?.selectedIndex = 1
-            
+        turnActivityOn()
+        dispatchGroup.wait()
+        if userId == currentUser.id {
+            turnActivityOff()
+            navigationController?.tabBarController?.selectedIndex = 2
         } else {
-            turnActivityOn()
             
             // Ищем пользователя:
             DataProviders.shared.usersDataProvider.user(with: userId, queue: self.queue) { user in
@@ -165,7 +172,7 @@ extension FeedViewController: TransitionProtocol {
             }
         }
     }
-
+    
 }
 
 // Добавляем глобальную очередь:
@@ -179,7 +186,6 @@ extension FeedViewController {
 extension FeedViewController {
     
     func turnActivityOn() {
-        print("turnActivityOn")
         // Установка активити индикатора и его фона:
         activityIndicatorShadowView.isHidden = false
         activityIndicator.isHidden = false
@@ -187,7 +193,6 @@ extension FeedViewController {
     }
     
     func turnActivityOff() {
-        print("turnActivityOff")
         // Установка активити индикатора и его фона:
         activityIndicator.stopAnimating()
         activityIndicatorShadowView.isHidden = true

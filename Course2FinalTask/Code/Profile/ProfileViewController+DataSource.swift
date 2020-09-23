@@ -19,7 +19,6 @@ extension ProfileViewController: UICollectionViewDataSource {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ProfileFeedCell.self), for: indexPath) as? ProfileFeedCell else { return UICollectionViewCell() }
         guard let postsOfUser = postsOfUser else { return UICollectionViewCell() }
-        cell.turnActivityOn()
         cell.post = postsOfUser[indexPath.item]
         return cell
     }

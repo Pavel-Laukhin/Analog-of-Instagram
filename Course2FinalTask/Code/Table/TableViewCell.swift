@@ -9,7 +9,7 @@
 import UIKit
 import DataProvider
 
-class TableViewCell: UITableViewCell {
+final class TableViewCell: UITableViewCell {
     
     var user: User? {
         didSet {
@@ -19,12 +19,6 @@ class TableViewCell: UITableViewCell {
             setUpLayout()
         }
     }
-    
-    //    override func setSelected(_ selected: Bool, animated: Bool) {
-    //        super.setSelected(selected, animated: animated)
-    //
-    //        // Configure the view for the selected state
-    //    }
     
     // Настроим расположение картинки и текста:
     private func setUpLayout() {
