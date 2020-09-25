@@ -27,6 +27,7 @@ extension FilterViewController: UICollectionViewDelegateFlowLayout {
             cell.layer.cornerRadius = 10.0
             cell.layer.masksToBounds = true
             selectedItemNumber = indexPath.item
+            setFilteredImage()
             collectionView.reloadData()
         }
     }

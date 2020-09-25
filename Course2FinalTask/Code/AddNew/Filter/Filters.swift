@@ -9,17 +9,19 @@
 import Foundation
 
 struct Filters {
-    let filterArray = [
-        "Normal",
-        "CIBlur",
-        "CIColorInvert",
-        "CISepiaTone",
-        "CICrystallize",
-        "CIPhotoEffectChrome",
-        "CIPhotoEffectFade",
-        "CIPhotoEffectNoir",
-        "CIPhotoEffectProcess",
-        "CIPhotoEffectTonal",
-        "CIPhotoEffectTransfer"
+    
+    /// Array of tuples with two values: title - is used for displaying on screen, filter - is used for correct processing by CIFilter
+    let filtersArray = [
+        (title: "Normal", filter: "Normal"),
+        (title: "Blur", filter: "CIGaussianBlur"),
+        (title: "Instant", filter: "CIPhotoEffectInstant"),
+        (title: "ColorInvert", filter: "CIColorInvert"),
+        (title: "SepiaTone", filter: "CISepiaTone"),
+        (title: "Noir", filter: "CIPhotoEffectNoir"),
+        (title: "Process", filter: "CIPhotoEffectProcess"),
+        (title: "Fade", filter: "CIPhotoEffectFade"),
+        (title: "Tonal", filter: "CIPhotoEffectTonal"),
+        (title: "Transfer", filter: "CIPhotoEffectTransfer")
     ]
+    
 }

@@ -8,27 +8,13 @@
 
 import UIKit
 
-protocol AbleToReloadCollectionViewData {
-    func reloadData()
-}
-
 final class FilterViewCell: UICollectionViewCell {
-    
-    var delegate: AbleToReloadCollectionViewData?
-    
+        
     var image: UIImage? {
         didSet {
-            let queue = OperationQueue()
-            let operation = FilterImageOperation(inputImage: image, filter: title ?? "CIBlur")
-            operation.completionBlock = {
-                DispatchQueue.main.async {
-                    self.imageView.image = operation.outputImage
-                    self.contentView.addSubview(self.imageView)
-                    self.imageView.center.x = self.contentView.center.x
-                    self.delegate?.reloadData()
-                }
-            }
-            queue.addOperation(operation)
+            imageView.image = image
+            contentView.addSubview(imageView)
+            imageView.center.x = contentView.center.x
         }
     }
     var title: String? {
@@ -50,6 +36,7 @@ final class FilterViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(x: 0, y: 6, width: 50, height: 50)
+        self.contentView.addSubview(imageView)
         return imageView
     }()
     private lazy var label: UILabel = {

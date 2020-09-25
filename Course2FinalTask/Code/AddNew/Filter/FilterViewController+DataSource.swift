@@ -11,15 +11,19 @@ import UIKit
 extension FilterViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return filters.filterArray.count
+        return filters.filtersArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: FilterViewCell.self), for: indexPath) as? FilterViewCell else { return UICollectionViewCell() }
-        let filter = filters.filterArray[indexPath.item]
-        cell.delegate = self
-        cell.title = filter
-        cell.image = self.thumbnailImage
+        let filterTitle = filters.filtersArray[indexPath.item].title
+        cell.title = filterTitle
+        if indexPath.item == 0 {
+            cell.image = thumbnailImage
+        } else if filteredThumbnailImagesDictionary.count > indexPath.item {
+            let image = filteredThumbnailImagesDictionary[filterTitle]
+            cell.image = image
+        }
         
         // Устанавливаем рамку, если ячейка выделена. Стираем рамку, если нет.
         if indexPath.item == selectedItemNumber {

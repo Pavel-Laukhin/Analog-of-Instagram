@@ -334,14 +334,14 @@ extension ProfileViewController {
 // ДОбавляем включениеи выключение индикатора активности:
 extension ProfileViewController {
     
-    func turnActivityOn() {
+    private func turnActivityOn() {
         // Установка активити индикатора и его фона:
         activityIndicatorShadowView.isHidden = false
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
     
-    func turnActivityOff() {
+    private func turnActivityOff() {
         // Установка активити индикатора и его фона:
         activityIndicator.stopAnimating()
         activityIndicatorShadowView.isHidden = true
