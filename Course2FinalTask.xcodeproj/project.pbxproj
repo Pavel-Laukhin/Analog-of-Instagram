@@ -19,6 +19,7 @@
 		E91E5D6E251A858B00A15439 /* FilterViewController+DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D6D251A858B00A15439 /* FilterViewController+DataSource.swift */; };
 		E91E5D70251A85E900A15439 /* Filters.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91E5D6F251A85E900A15439 /* Filters.swift */; };
 		E92A49612515B5AC00541921 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92A49602515B5AC00541921 /* TabBarController.swift */; };
+		E92D4830251E256700175D0E /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D482F251E256700175D0E /* ShareViewController.swift */; };
 		E941B69024F84CCA008701E3 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E941B68F24F84CCA008701E3 /* Alert.swift */; };
 		E968F75324AFAB8300BFAC70 /* LayoutConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E968F75224AFAB8300BFAC70 /* LayoutConstants.swift */; };
 		E968F75624B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E968F75524B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift */; };
@@ -63,6 +64,7 @@
 		E91E5D6D251A858B00A15439 /* FilterViewController+DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterViewController+DataSource.swift"; sourceTree = "<group>"; };
 		E91E5D6F251A85E900A15439 /* Filters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filters.swift; sourceTree = "<group>"; };
 		E92A49602515B5AC00541921 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		E92D482F251E256700175D0E /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		E941B68F24F84CCA008701E3 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		E968F75224AFAB8300BFAC70 /* LayoutConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutConstants.swift; sourceTree = "<group>"; };
 		E968F75524B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewController+DelegateFlowLayout.swift"; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 			children = (
 				E91E5D71251B4F5800A15439 /* NewPost */,
 				E91E5D72251B4F6700A15439 /* Filter */,
+				E92D482E251E253F00175D0E /* Share */,
 			);
 			path = AddNew;
 			sourceTree = "<group>";
@@ -185,6 +188,14 @@
 				E92A49602515B5AC00541921 /* TabBarController.swift */,
 			);
 			path = TabBar;
+			sourceTree = "<group>";
+		};
+		E92D482E251E253F00175D0E /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				E92D482F251E256700175D0E /* ShareViewController.swift */,
+			);
+			path = Share;
 			sourceTree = "<group>";
 		};
 		E968F75424B0B70C00BFAC70 /* Feed */ = {
@@ -314,6 +325,7 @@
 				E9764D4624AE67F20073C8E7 /* FeedCell.swift in Sources */,
 				E91E5D402518F3AB00A15439 /* FilterViewController.swift in Sources */,
 				E91E5D6C251A824200A15439 /* FilterViewCell.swift in Sources */,
+				E92D4830251E256700175D0E /* ShareViewController.swift in Sources */,
 				E92A49612515B5AC00541921 /* TabBarController.swift in Sources */,
 				E91E5D6A251A818D00A15439 /* FilterViewController+DelegateFlowLayout.swift in Sources */,
 				E9A23D7C24B208E20017BB7E /* ProfileViewController+Delegate.swift in Sources */,

@@ -11,7 +11,6 @@ import DataProvider
 
 final class FilterViewController: UIViewController {
     
-    private var image: UIImage
     private let initialImage: UIImage
     let imageView = UIImageView()
     let thumbnailImage: UIImage
@@ -47,7 +46,7 @@ final class FilterViewController: UIViewController {
     }()
     
     init(image: UIImage, thumbnailImage: UIImage) {
-        self.image = image
+        imageView.image = image
         initialImage = image
         self.thumbnailImage = thumbnailImage
         super.init(nibName: nil, bundle: nil)
@@ -61,7 +60,6 @@ final class FilterViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Filters"
-        imageView.image = image
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(
             x: 0,
@@ -90,11 +88,13 @@ final class FilterViewController: UIViewController {
         view.backgroundColor = .white
         
         setThumbnailImages()
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", style: .done, target: self, action: #selector(goNext))
     }
     
     private func setThumbnailImages() {
         for filter in filters.filtersArray where filter.title != "Normal" {
-            let operation = FilterImageOperation(inputImage: image, filter: filter.filter)
+            let operation = FilterImageOperation(inputImage: imageView.image, filter: filter.filter)
             operation.completionBlock = {
                 guard let outputImage = operation.outputImage else { return }
                 self.filteredThumbnailImagesDictionary[filter.title] = outputImage
@@ -104,6 +104,25 @@ final class FilterViewController: UIViewController {
             }
             queue.addOperation(operation)
         }
+    }
+    
+    func setFilteredImage() {
+        turnActivityOn()
+        guard selectedItemNumber != 0 else {
+            imageView.image = initialImage
+            turnActivityOff()
+            return
+        }
+        let filter = filters.filtersArray[selectedItemNumber].filter
+        let operation = FilterImageOperation(inputImage: imageView.image, filter: filter)
+        operation.completionBlock = {
+            DispatchQueue.main.async {
+                guard let outputImage = operation.outputImage else { return }
+                self.imageView.image = outputImage
+                self.turnActivityOff()
+            }
+        }
+        queue.addOperation(operation)
     }
     
     private func turnActivityOn() {
@@ -120,23 +139,9 @@ final class FilterViewController: UIViewController {
         activityIndicator.isHidden = true
     }
     
-    func setFilteredImage() {
-        turnActivityOn()
-        guard selectedItemNumber != 0 else {
-            imageView.image = initialImage
-            turnActivityOff()
-            return
-        }
-        let filter = filters.filtersArray[selectedItemNumber].filter
-        let operation = FilterImageOperation(inputImage: self.image, filter: filter)
-        operation.completionBlock = {
-            DispatchQueue.main.async {
-                guard let outputImage = operation.outputImage else { return }
-                self.imageView.image = outputImage
-                self.turnActivityOff()
-            }
-        }
-        queue.addOperation(operation)
+    @objc func goNext() {
+        let shareViewController = ShareViewController(image: imageView.image)
+        navigationController?.pushViewController(shareViewController, animated: true)
     }
     
 }
