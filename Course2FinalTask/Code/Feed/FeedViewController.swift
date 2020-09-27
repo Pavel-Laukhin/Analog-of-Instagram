@@ -205,6 +205,15 @@ extension FeedViewController {
     
     func updateFeed() {
         turnActivityOn()
+        
+        // Включаем необходимость перезагрузить посты в контроллере ProfileViewController:
+        if let profileNavController = navigationController?.tabBarController?.viewControllers?[2] as? UINavigationController  {
+            if let profileVC = profileNavController.viewControllers[0] as? ProfileViewController {
+                profileVC.isInNeedOfUpdating = true
+            }
+        }
+        
+        // Обновляем feed и перезагружаем коллекцию:
         DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
             DispatchQueue.main.async {
                 self.allPosts = posts

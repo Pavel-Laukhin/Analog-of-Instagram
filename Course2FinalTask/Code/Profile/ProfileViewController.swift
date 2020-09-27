@@ -14,14 +14,7 @@ final class ProfileViewController: UIViewController {
     
     var user: User?
     var currentUser: User?
-    
-    /// Дополнительный статус, определяющий, следит ли наш текущий юзер за данным юзером или нет
-    var allPosts: [Post]? {
-        didSet {
-        }
-    }
-    
-    //TODO: перенести из геттера в дидСэт у allPosts:
+    var allPosts: [Post]?
     var postsOfUser: [Post]? {
         get {
             var tempArrayOfPosts = [Post]()
@@ -34,10 +27,16 @@ final class ProfileViewController: UIViewController {
             return tempArrayOfPosts
         }
     }
+    
+    /// Подписан ли текущий пользователь на этого пользователя
     private var isFollowed: Bool?
+    
     private let scrollView = UIScrollView()
     private let topInset: CGFloat = 8
     private let collectionViewInset: CGFloat = 8
+    
+    /// Свойство, говорящее о том, что в feed были внесены изменения и поэтому необходимо обновить allPosts
+    var isInNeedOfUpdating = false
     
     // MARK: - Visual elements
     private var avatarImageView: UIImageView = {
@@ -65,17 +64,28 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     private lazy var collectionView: UICollectionView = {
+        
         // 1. Делаем дефолтный макет, иначе наша коллекшн вью не сможет понять, как ей отрисовывать наши ячейки на экране:
         let layout = UICollectionViewFlowLayout()
+        
         // 2. Делаем экземпляр класса коллекшн вью. Можно передать во фрейм "зиро", то есть нулевой прямоугольник. Ничего страшного, потому что потом этот фрейм растянется, как нам надо:
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
         // 3. Регистрируем ячейку:
         collectionView.register(ProfileFeedCell.self, forCellWithReuseIdentifier: String(describing: ProfileFeedCell.self))
+        
         // 4. Указываем наш контроллер источником информации и делегатом:
         collectionView.dataSource = self
         collectionView.delegate = self
+        
         collectionView.backgroundColor = .white
-        // 5.Возвращаем результат:
+        
+        // 5. Отключаем встроенный скролл вью у коллекции:
+        collectionView.isScrollEnabled = false
+        
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // 6.Возвращаем результат:
         return collectionView
     }()
     private lazy var toFollowButton: UIButton = {
@@ -130,6 +140,12 @@ final class ProfileViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /// Текущий отступ у скролл вью. Нужен для корректной перемотки скролл вью в самое начало.
+    private lazy var offset = CGPoint(
+            x: -scrollView.adjustedContentInset.left,
+            y: -scrollView.adjustedContentInset.top
+    )
+    
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -138,6 +154,20 @@ final class ProfileViewController: UIViewController {
         addSubviews()
         setUpLayout()
         allPostsHandler()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if isInNeedOfUpdating {
+            turnActivityOn()
+            
+            // Перематываем скролл вью наверх:
+            scrollView.setContentOffset(offset, animated: false)
+            
+            // Обновляем посты:
+            updateAllPosts()
+        }
     }
     
     private func updateUI() {
@@ -158,17 +188,22 @@ final class ProfileViewController: UIViewController {
             turnActivityOn()
             
             // Загружаем посты:
-            DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
-                if let posts = posts {
-                    self.allPosts = posts
-                }
-                
-                // Перезагружаем коллекцию и выключаем индикатор активности:
-                DispatchQueue.main.async {
-                    self.collectionView.reloadData()
-                    self.setUpScrollView()
-                    self.turnActivityOff()
-                }
+            updateAllPosts()
+        }
+    }
+    
+    private func updateAllPosts() {
+        DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
+            if let posts = posts {
+                self.allPosts = posts
+                self.isInNeedOfUpdating = false
+            }
+            
+            // Перезагружаем коллекцию и выключаем индикатор активности:
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+                self.setUpScrollView()
+                self.turnActivityOff()
             }
         }
     }
@@ -232,12 +267,12 @@ final class ProfileViewController: UIViewController {
             toFollowButton.trailingAnchor.constraint(equalTo: followingButton.trailingAnchor)
         ])
         
-        collectionView.frame = CGRect(
-            x: 0,
-            y: avatarImageView.frame.maxY + collectionViewInset,
-            width: view.bounds.width,
-            height: view.bounds.height - topInset - avatarImageView.frame.height - collectionViewInset
-        )
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: collectionViewInset),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
 
         let navBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
         let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
