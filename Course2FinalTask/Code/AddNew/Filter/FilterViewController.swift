@@ -97,8 +97,10 @@ final class FilterViewController: UIViewController {
             let operation = FilterImageOperation(inputImage: imageView.image, filter: filter.filter)
             operation.completionBlock = {
                 guard let outputImage = operation.outputImage else { return }
-                self.filteredThumbnailImagesDictionary[filter.title] = outputImage
+                
+                // Чтобы избежать race condition, будем обновлять словарь в последовательной очереди главного потока:
                 DispatchQueue.main.async {
+                    self.filteredThumbnailImagesDictionary[filter.title] = outputImage
                     self.collectionView.reloadData()
                 }
             }
@@ -114,7 +116,7 @@ final class FilterViewController: UIViewController {
             return
         }
         let filter = filters.filtersArray[selectedItemNumber].filter
-        let operation = FilterImageOperation(inputImage: imageView.image, filter: filter)
+        let operation = FilterImageOperation(inputImage: initialImage, filter: filter)
         operation.completionBlock = {
             DispatchQueue.main.async {
                 guard let outputImage = operation.outputImage else { return }

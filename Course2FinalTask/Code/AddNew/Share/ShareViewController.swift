@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import DataProvider
 
 final class ShareViewController: UIViewController {
     
@@ -44,8 +45,12 @@ final class ShareViewController: UIViewController {
         textView.isScrollEnabled = false
         textView.translatesAutoresizingMaskIntoConstraints = false
         
+        textView.becomeFirstResponder()
+        
         return textView
     }()
+    
+    let queue = DispatchQueue.global()
     
     init(image: UIImage?) {
         self.imageView.image = image
@@ -101,7 +106,18 @@ final class ShareViewController: UIViewController {
     }
     
     @objc func sharePhoto() {
-        print(textView.text)
+        guard let image = imageView.image else { return }
+        DataProviders.shared.postsDataProvider.newPost(with: image, description: textView.text, queue: queue) { post in
+            guard post != nil else {
+                Alert.showBasic(vc: self)
+                return
+            }
+            DispatchQueue.main.async {
+                if let root = self.navigationController?.viewControllers[0] as? NewPostViewController {
+                    root.updateFeed()
+                }
+            }
+        }
     }
     
 }

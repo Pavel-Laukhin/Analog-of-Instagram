@@ -45,3 +45,17 @@ final class NewPostViewController: UICollectionViewController {
     }
    
 }
+
+extension NewPostViewController {
+    
+    func updateFeed() {
+        self.navigationController?.popToRootViewController(animated: false)
+        self.navigationController?.tabBarController?.selectedIndex = 0
+        if let feedNavController = self.navigationController?.tabBarController?.viewControllers?[0] as? UINavigationController {
+            if let feed = feedNavController.viewControllers[0] as? FeedViewController {
+                feed.updateFeed()
+            }
+        }
+    }
+    
+}

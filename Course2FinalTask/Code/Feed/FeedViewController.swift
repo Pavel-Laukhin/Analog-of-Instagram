@@ -200,3 +200,18 @@ extension FeedViewController {
     }
     
 }
+
+extension FeedViewController {
+    
+    func updateFeed() {
+        turnActivityOn()
+        DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
+            DispatchQueue.main.async {
+                self.allPosts = posts
+                self.collectionView.reloadData()
+                self.turnActivityOff()
+            }
+        }
+    }
+    
+}
