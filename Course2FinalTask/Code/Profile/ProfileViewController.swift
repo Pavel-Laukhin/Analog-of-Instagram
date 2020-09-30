@@ -31,6 +31,9 @@ final class ProfileViewController: UIViewController {
     /// Подписан ли текущий пользователь на этого пользователя
     private var isFollowed: Bool?
     
+    /// Запущен ли процесс подписки/отписки в данный момент
+    private var isInTheProcessOfChangingSubscription = false
+    
     private let scrollView = UIScrollView()
     private let topInset: CGFloat = 8
     private let collectionViewInset: CGFloat = 8
@@ -121,7 +124,7 @@ final class ProfileViewController: UIViewController {
         view.alpha = 0.7
         view.isHidden = true
         return view
-        }()
+    }()
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .white)
         indicator.isHidden = true
@@ -142,8 +145,8 @@ final class ProfileViewController: UIViewController {
     
     /// Текущий отступ у скролл вью. Нужен для корректной перемотки скролл вью в самое начало.
     private lazy var offset = CGPoint(
-            x: -scrollView.adjustedContentInset.left,
-            y: -scrollView.adjustedContentInset.top
+        x: -scrollView.adjustedContentInset.left,
+        y: -scrollView.adjustedContentInset.top
     )
     
     // MARK: - Life cycle
@@ -158,7 +161,7 @@ final class ProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
         if isInNeedOfUpdating {
             turnActivityOn()
             
@@ -217,7 +220,7 @@ final class ProfileViewController: UIViewController {
          toFollowButton,
          activityIndicatorShadowView,
          activityIndicator
-            ].forEach { scrollView.addSubview($0) }
+        ].forEach { scrollView.addSubview($0) }
     }
     
     private func setUpLayout() {
@@ -236,7 +239,7 @@ final class ProfileViewController: UIViewController {
             height: 70
         )
         avatarImageView.layer.cornerRadius = 35
-
+        
         userFullNameLabel.sizeToFit()
         userFullNameLabel.frame = CGRect(
             x: avatarImageView.frame.maxX + 8,
@@ -272,7 +275,7 @@ final class ProfileViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-
+        
         let navBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
         let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
         
@@ -333,33 +336,68 @@ final class ProfileViewController: UIViewController {
         }
     }
     
+    /// Метод, который меняет текущий статус подписки и название кнопки, а также запускает процесс подписки/отписки в DataProvider (если только процесс подписки/отписки не выполняется в данный момент)
     @objc func toFollowButtonTapped() {
         if isFollowed ?? user.currentUserFollowsThisUser {
-            toFollowButton.setTitle("Follow", for: .normal)
-            DataProviders.shared.usersDataProvider.unfollow(user.id, queue: serialQueue) { user in
-                if let user = user {
-                    print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider")
-                    DispatchQueue.main.async {
-                        self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
-                    }
-                } else {
-                    print("user: \(String(describing: self.user.username)): nil in DataProvider")
-                }
-            }
             isFollowed = false
-        } else {
-            toFollowButton.setTitle("Unfollow", for: .normal)
-            DataProviders.shared.usersDataProvider.follow(user.id, queue: serialQueue) { user in
-                if let user = user {
-                    print("user: \(String(describing: self.user.username)): Followed in DataProvider")
-                    DispatchQueue.main.async {
-                    self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
-                    }
-                } else {
-                    print("user: \(String(describing: self.user.username)): nil in DataProvider")
-                }
+            toFollowButton.setTitle("Follow", for: .normal)
+            if !isInTheProcessOfChangingSubscription {
+                isInTheProcessOfChangingSubscription = true
+                toUnfollow()
             }
+        } else {
             isFollowed = true
+            toFollowButton.setTitle("Unfollow", for: .normal)
+            if !isInTheProcessOfChangingSubscription {
+                isInTheProcessOfChangingSubscription = true
+                toFollow()
+            }
+        }
+    }
+    
+    private func toFollow() {
+        DataProviders.shared.usersDataProvider.follow(user.id, queue: queue) { user in
+            guard let user = user else {
+                print("user: \(String(describing: self.user.username)): nil in DataProvider")
+                return
+            }
+            
+            // Прежде чем менять число подписчиков, метод должен проверить, не передумал ли юзер, пока процесс выполнялся (не нажал ли юзер снова кнопку Follow/Unfollow). Если передумал, то тогда нужно запустить обратный процесс:
+            if self.isFollowed ?? true {
+                DispatchQueue.main.async {
+                    self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
+                }
+                
+                // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
+                print("user: \(String(describing: self.user.username)): Followed in DataProvider")
+                self.isInTheProcessOfChangingSubscription = false
+            } else {
+                print("user: \(String(describing: self.user.username)): Followed in DataProvider BUT NEED TO CHANGE")
+                self.toUnfollow()
+            }
+        }
+    }
+    
+    private func toUnfollow() {
+        DataProviders.shared.usersDataProvider.unfollow(user.id, queue: queue) { user in
+            guard let user = user else {
+                print("user: \(String(describing: self.user.username)): nil in DataProvider")
+                return
+            }
+            
+            // Прежде чем менять число подписчиков, метод должен проверить, не передумал ли юзер, пока процесс выполнялся (не нажал ли юзер снова кнопку Follow/Unfollow). Если передумал, то тогда нужно запустить обратный процесс:
+            if !(self.isFollowed ?? false) {
+                DispatchQueue.main.async {
+                    self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
+                }
+                
+                // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
+                print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider")
+                self.isInTheProcessOfChangingSubscription = false
+            } else {
+                print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider BUT NEED TO CHANGE")
+                self.toFollow()
+            }
         }
     }
     
@@ -367,9 +405,8 @@ final class ProfileViewController: UIViewController {
 
 //Добавляем очереди
 extension ProfileViewController {
-        
+    
     var queue: DispatchQueue { DispatchQueue.global() }
-    var serialQueue: DispatchQueue { DispatchQueue(label: "serialQueue") }
     
 }
 
