@@ -167,7 +167,7 @@ extension FeedViewController: TransitionProtocol {
                 // Показываем страницу юзера:
                 DispatchQueue.main.async {
                     self.turnActivityOff()
-                    self.navigationController?.pushViewController(ProfileViewController(user: user, allPosts: self.allPosts), animated: true)
+                    self.navigationController?.pushViewController(ProfileViewController(user: user, allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             }
         }

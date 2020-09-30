@@ -107,7 +107,6 @@ final class FeedCell: UICollectionViewCell {
         authorNameLabel.text = ""
         dateLabel.text = ""
         numberOfLikesLabel.text = ""
-//        isLikeButton.isHidden = true
         descriptionLabel.text = ""
         
         // Обнуление данных ячейки:

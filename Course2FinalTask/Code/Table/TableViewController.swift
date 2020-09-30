@@ -11,7 +11,6 @@ import DataProvider
 
 final class TableViewController: UITableViewController {
     
-    var lastSelectedRow: IndexPath?
     var currentlySelectedRow: IndexPath?
     
     var users: [User]

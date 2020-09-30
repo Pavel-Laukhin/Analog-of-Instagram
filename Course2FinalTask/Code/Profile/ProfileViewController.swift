@@ -12,7 +12,7 @@ import DataProvider
 
 final class ProfileViewController: UIViewController {
     
-    var user: User?
+    var user: User
     var currentUser: User?
     var allPosts: [Post]?
     var postsOfUser: [Post]? {
@@ -20,7 +20,7 @@ final class ProfileViewController: UIViewController {
             var tempArrayOfPosts = [Post]()
             guard let allPosts = allPosts else { return [] }
             allPosts.forEach {
-                if $0.author == user?.id {
+                if $0.author == user.id {
                     tempArrayOfPosts.append($0)
                 }
             }
@@ -101,7 +101,7 @@ final class ProfileViewController: UIViewController {
             button.isHidden = true
             return button
         }
-        guard currentUser?.id != user?.id, let user = user else {
+        guard currentUser?.id != user.id else {
             button.isHidden = true
             return button
         }
@@ -171,7 +171,6 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateUI() {
-        guard let user = user else { return }
         navigationItem.title = user.username
         avatarImageView.image = user.avatar
         userFullNameLabel.text = user.fullName
@@ -302,7 +301,7 @@ final class ProfileViewController: UIViewController {
     // MARK: - Actions
     @objc func followingButtonTapped() {
         turnActivityOn()
-        DataProviders.shared.usersDataProvider.usersFollowedByUser(with: user!.id, queue: queue) { users in
+        DataProviders.shared.usersDataProvider.usersFollowedByUser(with: user.id, queue: queue) { users in
             if let users = users {
                 DispatchQueue.main.async {
                     self.turnActivityOff()
@@ -319,7 +318,7 @@ final class ProfileViewController: UIViewController {
     
     @objc func followersButtonTapped() {
         turnActivityOn()
-        DataProviders.shared.usersDataProvider.usersFollowingUser(with: user!.id, queue: queue) { users in
+        DataProviders.shared.usersDataProvider.usersFollowingUser(with: user.id, queue: queue) { users in
             if let users = users {
                 DispatchQueue.main.async {
                     self.turnActivityOff()
@@ -335,19 +334,16 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc func toFollowButtonTapped() {
-        guard let user = user else {
-            return
-        }
         if isFollowed ?? user.currentUserFollowsThisUser {
             toFollowButton.setTitle("Follow", for: .normal)
             DataProviders.shared.usersDataProvider.unfollow(user.id, queue: serialQueue) { user in
                 if let user = user {
-                    print("user: \(String(describing: self.user?.username)): Unfollowed in DataProvider")
+                    print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider")
                     DispatchQueue.main.async {
                         self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
                     }
                 } else {
-                    print("user: \(String(describing: self.user?.username)): nil in DataProvider")
+                    print("user: \(String(describing: self.user.username)): nil in DataProvider")
                 }
             }
             isFollowed = false
@@ -355,12 +351,12 @@ final class ProfileViewController: UIViewController {
             toFollowButton.setTitle("Unfollow", for: .normal)
             DataProviders.shared.usersDataProvider.follow(user.id, queue: serialQueue) { user in
                 if let user = user {
-                    print("user: \(String(describing: self.user?.username)): Followed in DataProvider")
+                    print("user: \(String(describing: self.user.username)): Followed in DataProvider")
                     DispatchQueue.main.async {
                     self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
                     }
                 } else {
-                    print("user: \(String(describing: self.user?.username)): nil in DataProvider")
+                    print("user: \(String(describing: self.user.username)): nil in DataProvider")
                 }
             }
             isFollowed = true
