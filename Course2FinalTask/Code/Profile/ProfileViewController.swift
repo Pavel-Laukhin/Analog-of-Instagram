@@ -301,13 +301,16 @@ final class ProfileViewController: UIViewController {
     
     // MARK: - Actions
     @objc func followingButtonTapped() {
+        turnActivityOn()
         DataProviders.shared.usersDataProvider.usersFollowedByUser(with: user!.id, queue: queue) { users in
-            if users != nil {
+            if let users = users {
                 DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(TableViewController(users: users!, title: "Following", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
+                    self.turnActivityOff()
+                    self.navigationController?.pushViewController(TableViewController(users: users, title: "Following", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             } else {
                 DispatchQueue.main.async {
+                    self.turnActivityOff()
                     Alert.showBasic(vc: self)
                 }
             }
@@ -315,13 +318,16 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc func followersButtonTapped() {
-        DataProviders.shared.usersDataProvider.usersFollowedByUser(with: user!.id, queue: queue) { users in
-            if users != nil {
+        turnActivityOn()
+        DataProviders.shared.usersDataProvider.usersFollowingUser(with: user!.id, queue: queue) { users in
+            if let users = users {
                 DispatchQueue.main.async {
-                    self.navigationController?.pushViewController(TableViewController(users: users!, title: "Followers", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
+                    self.turnActivityOff()
+                    self.navigationController?.pushViewController(TableViewController(users: users, title: "Followers", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             } else {
                 DispatchQueue.main.async {
+                    self.turnActivityOff()
                     Alert.showBasic(vc: self)
                 }
             }
@@ -335,8 +341,11 @@ final class ProfileViewController: UIViewController {
         if isFollowed ?? user.currentUserFollowsThisUser {
             toFollowButton.setTitle("Follow", for: .normal)
             DataProviders.shared.usersDataProvider.unfollow(user.id, queue: serialQueue) { user in
-                if user != nil {
+                if let user = user {
                     print("user: \(String(describing: self.user?.username)): Unfollowed in DataProvider")
+                    DispatchQueue.main.async {
+                        self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
+                    }
                 } else {
                     print("user: \(String(describing: self.user?.username)): nil in DataProvider")
                 }
@@ -345,8 +354,11 @@ final class ProfileViewController: UIViewController {
         } else {
             toFollowButton.setTitle("Unfollow", for: .normal)
             DataProviders.shared.usersDataProvider.follow(user.id, queue: serialQueue) { user in
-                if user != nil {
+                if let user = user {
                     print("user: \(String(describing: self.user?.username)): Followed in DataProvider")
+                    DispatchQueue.main.async {
+                    self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
+                    }
                 } else {
                     print("user: \(String(describing: self.user?.username)): nil in DataProvider")
                 }
