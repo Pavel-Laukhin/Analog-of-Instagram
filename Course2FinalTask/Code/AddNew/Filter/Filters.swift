@@ -11,7 +11,7 @@ import Foundation
 struct Filters {
     
     /// Array of tuples with two values: title - is used for displaying on screen, filter - is used for correct processing by CIFilter
-    let filtersArray = [
+    static let filtersArray = [
         (title: "Normal", filter: "Normal"),
         (title: "Blur", filter: "CIGaussianBlur"),
         (title: "Instant", filter: "CIPhotoEffectInstant"),

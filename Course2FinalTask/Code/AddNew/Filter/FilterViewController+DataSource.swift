@@ -11,17 +11,16 @@ import UIKit
 extension FilterViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return filters.filtersArray.count
+        return Filters.filtersArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: FilterViewCell.self), for: indexPath) as? FilterViewCell else { return UICollectionViewCell() }
-        let filterTitle = filters.filtersArray[indexPath.item].title
+        let filterTitle = Filters.filtersArray[indexPath.item].title
         cell.title = filterTitle
         if indexPath.item == 0 {
             cell.image = thumbnailImage
-        } else if filteredThumbnailImagesDictionary.count > indexPath.item {
-            let image = filteredThumbnailImagesDictionary[filterTitle]
+        } else if let image = filteredThumbnailImagesDictionary[filterTitle] {
             cell.image = image
         }
         

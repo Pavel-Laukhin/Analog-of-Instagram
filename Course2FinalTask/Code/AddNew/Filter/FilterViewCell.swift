@@ -46,4 +46,9 @@ final class FilterViewCell: UICollectionViewCell {
         return label
     }()
     
+    deinit {
+        image = nil
+        imageView.image = nil
+    }
+    
 }

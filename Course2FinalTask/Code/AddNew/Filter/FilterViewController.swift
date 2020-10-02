@@ -27,7 +27,6 @@ final class FilterViewController: UIViewController {
         return collectionView
     }()
     var selectedItemNumber: Int = 0
-    let filters = Filters()
     let queue = OperationQueue()
     
     /// Затемняющая вьюха, работающая вместе с индикатором активности
@@ -97,7 +96,7 @@ final class FilterViewController: UIViewController {
     }
     
     private func setThumbnailImages() {
-        for filter in filters.filtersArray where filter.title != "Normal" {
+        for filter in Filters.filtersArray where filter.title != "Normal" {
             let operation = FilterImageOperation(inputImage: imageView.image, filter: filter.filter)
             operation.completionBlock = {
                 guard let outputImage = operation.outputImage else { return }
@@ -119,7 +118,7 @@ final class FilterViewController: UIViewController {
             turnActivityOff()
             return
         }
-        let filter = filters.filtersArray[selectedItemNumber].filter
+        let filter = Filters.filtersArray[selectedItemNumber].filter
         let operation = FilterImageOperation(inputImage: initialImage, filter: filter)
         operation.completionBlock = {
             DispatchQueue.main.async {
