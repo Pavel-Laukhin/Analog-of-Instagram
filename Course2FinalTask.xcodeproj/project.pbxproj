@@ -27,6 +27,7 @@
 		E9764D4224AE529B0073C8E7 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9764D4124AE529B0073C8E7 /* ProfileViewController.swift */; };
 		E9764D4424AE65D30073C8E7 /* FeedViewController+DataSourse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9764D4324AE65D30073C8E7 /* FeedViewController+DataSourse.swift */; };
 		E9764D4624AE67F20073C8E7 /* FeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9764D4524AE67F20073C8E7 /* FeedCell.swift */; };
+		E97820FD2527AF8600C7BD1B /* ActivityIndicatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97820FC2527AF8600C7BD1B /* ActivityIndicatorViewController.swift */; };
 		E97A95F8251B9778009C7261 /* FilterImageOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E97A95F7251B9778009C7261 /* FilterImageOperation.swift */; };
 		E9A23D7824B1F3BD0017BB7E /* ProfileViewController+DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D7724B1F3BD0017BB7E /* ProfileViewController+DataSource.swift */; };
 		E9A23D7A24B2045A0017BB7E /* ProfileFeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D7924B2045A0017BB7E /* ProfileFeedCell.swift */; };
@@ -72,6 +73,7 @@
 		E9764D4124AE529B0073C8E7 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		E9764D4324AE65D30073C8E7 /* FeedViewController+DataSourse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewController+DataSourse.swift"; sourceTree = "<group>"; };
 		E9764D4524AE67F20073C8E7 /* FeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCell.swift; sourceTree = "<group>"; };
+		E97820FC2527AF8600C7BD1B /* ActivityIndicatorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorViewController.swift; sourceTree = "<group>"; };
 		E97A95F7251B9778009C7261 /* FilterImageOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterImageOperation.swift; sourceTree = "<group>"; };
 		E9A23D7724B1F3BD0017BB7E /* ProfileViewController+DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileViewController+DataSource.swift"; sourceTree = "<group>"; };
 		E9A23D7924B2045A0017BB7E /* ProfileFeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFeedCell.swift; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 			children = (
 				74B79257202B3254006BCB41 /* AppDelegate.swift */,
 				E941B68F24F84CCA008701E3 /* Alert.swift */,
+				E97820FC2527AF8600C7BD1B /* ActivityIndicatorViewController.swift */,
 				E92A495F2515B57400541921 /* TabBar */,
 				E968F75424B0B70C00BFAC70 /* Feed */,
 				E91E5D3C2518ABA900A15439 /* AddNew */,
@@ -335,6 +338,7 @@
 				74B79258202B3254006BCB41 /* AppDelegate.swift in Sources */,
 				E941B69024F84CCA008701E3 /* Alert.swift in Sources */,
 				E9A23D7F24B2E6400017BB7E /* TableViewController.swift in Sources */,
+				E97820FD2527AF8600C7BD1B /* ActivityIndicatorViewController.swift in Sources */,
 				E9A23D8324B319840017BB7E /* FeedCell(Draft).swift in Sources */,
 				E91E5D70251A85E900A15439 /* Filters.swift in Sources */,
 				E9A23D7A24B2045A0017BB7E /* ProfileFeedCell.swift in Sources */,

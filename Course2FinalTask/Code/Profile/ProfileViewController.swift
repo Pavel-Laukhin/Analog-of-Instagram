@@ -302,34 +302,51 @@ final class ProfileViewController: UIViewController {
     }
     
     // MARK: - Actions
+    
+    /// Находит индекс вкладки у таб бара, которая сейчас отображается. Определяет корневую вью у данной вкладки. Запускает на весь экран у корневой вью метод startAnimating типа ActivityIndicatorViewController. Затем запускает метод, отображающий списко юзеров.
     @objc func followingButtonTapped() {
-        turnActivityOn()
+        guard let index = navigationController?.tabBarController?.selectedIndex,
+              let rootNavController = navigationController?.tabBarController?.viewControllers?[index] as? UINavigationController  else { return }
+        let rootVC = rootNavController.viewControllers[0]
+        ActivityIndicatorViewController.startAnimating(in: rootVC)
+        showUsersFollowedByUser(andDismissIn: rootVC)
+    }
+    
+    private func showUsersFollowedByUser(andDismissIn rootVC: UIViewController) {
         DataProviders.shared.usersDataProvider.usersFollowedByUser(with: user.id, queue: queue) { users in
             if let users = users {
                 DispatchQueue.main.async {
-                    self.turnActivityOff()
+                    rootVC.dismiss(animated: false, completion: nil)
                     self.navigationController?.pushViewController(TableViewController(users: users, title: "Following", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.turnActivityOff()
+                    rootVC.dismiss(animated: false, completion: nil)
                     Alert.showBasic(vc: self)
                 }
             }
         }
     }
     
+    /// Находит индекс вкладки у таб бара, которая сейчас отображается. Определяет корневую вью у данной вкладки. Запускает на весь экран у корневой вью метод startAnimating типа ActivityIndicatorViewController. Затем запускает метод, отображающий списко юзеров.
     @objc func followersButtonTapped() {
-        turnActivityOn()
+        guard let index = navigationController?.tabBarController?.selectedIndex,
+              let rootNavController = navigationController?.tabBarController?.viewControllers?[index] as? UINavigationController  else { return }
+        let rootVC = rootNavController.viewControllers[0]
+        ActivityIndicatorViewController.startAnimating(in: rootVC)
+        showUsersFollowingUser(andDismissIn: rootVC)
+    }
+    
+    private func showUsersFollowingUser(andDismissIn rootVC: UIViewController) {
         DataProviders.shared.usersDataProvider.usersFollowingUser(with: user.id, queue: queue) { users in
             if let users = users {
                 DispatchQueue.main.async {
-                    self.turnActivityOff()
+                    rootVC.dismiss(animated: false, completion: nil)
                     self.navigationController?.pushViewController(TableViewController(users: users, title: "Followers", allPosts: self.allPosts, currentUser: self.currentUser), animated: true)
                 }
             } else {
                 DispatchQueue.main.async {
-                    self.turnActivityOff()
+                    rootVC.dismiss(animated: false, completion: nil)
                     Alert.showBasic(vc: self)
                 }
             }

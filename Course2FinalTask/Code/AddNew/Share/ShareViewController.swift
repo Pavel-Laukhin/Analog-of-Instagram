@@ -106,16 +106,16 @@ final class ShareViewController: UIViewController {
     }
     
     @objc func sharePhoto() {
-        guard let image = imageView.image else { return }
+        guard let image = imageView.image,
+              let rootVC = self.navigationController?.viewControllers[0] as? NewPostViewController else { return }
+        rootVC.startAnimating()
         DataProviders.shared.postsDataProvider.newPost(with: image, description: textView.text, queue: queue) { post in
             guard post != nil else {
                 Alert.showBasic(vc: self)
                 return
             }
             DispatchQueue.main.async {
-                if let root = self.navigationController?.viewControllers[0] as? NewPostViewController {
-                    root.updateFeed()
-                }
+                    rootVC.updateFeed()
             }
         }
     }

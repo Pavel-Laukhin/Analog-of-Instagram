@@ -49,13 +49,19 @@ final class NewPostViewController: UICollectionViewController {
 extension NewPostViewController {
     
     func updateFeed() {
-        self.navigationController?.popToRootViewController(animated: false)
-        self.navigationController?.tabBarController?.selectedIndex = 0
-        if let feedNavController = self.navigationController?.tabBarController?.viewControllers?[0] as? UINavigationController {
-            if let feed = feedNavController.viewControllers[0] as? FeedViewController {
-                feed.updateFeed()
-            }
+        navigationController?.tabBarController?.dismiss(animated: false, completion: nil)
+        navigationController?.popToRootViewController(animated: false)
+        navigationController?.tabBarController?.selectedIndex = 0
+        if let feedNavController = navigationController?.tabBarController?.viewControllers?[0] as? UINavigationController,
+           let feed = feedNavController.viewControllers[0] as? FeedViewController {
+            feed.updateFeed()
         }
+    }
+    
+    func startAnimating() {
+        let activityVC = ActivityIndicatorViewController()
+        activityVC.modalPresentationStyle = .overFullScreen
+        navigationController?.tabBarController?.present(activityVC, animated: false, completion: nil)
     }
     
 }

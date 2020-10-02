@@ -206,6 +206,9 @@ extension FeedViewController {
     func updateFeed() {
         turnActivityOn()
         
+        // Сбрасываем feed до корневого контроллера
+        self.navigationController?.popToRootViewController(animated: false)
+        
         // Включаем необходимость перезагрузить посты в контроллере ProfileViewController:
         if let profileNavController = navigationController?.tabBarController?.viewControllers?[2] as? UINavigationController  {
             if let profileVC = profileNavController.viewControllers[0] as? ProfileViewController {
