@@ -12,6 +12,7 @@ import DataProvider
 final class FilterViewController: UIViewController {
     
     private let initialImage: UIImage
+    private var currentImage: UIImage? = nil
     let imageView = UIImageView()
     let thumbnailImage: UIImage
     var filteredThumbnailImagesDictionary: [String: UIImage] = [:]
@@ -60,6 +61,9 @@ final class FilterViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Filters"
+        
+        addLongPressGestureRecognizer()
+        
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(
             x: 0,
@@ -121,6 +125,7 @@ final class FilterViewController: UIViewController {
             DispatchQueue.main.async {
                 guard let outputImage = operation.outputImage else { return }
                 self.imageView.image = outputImage
+                self.showHint()
                 self.turnActivityOff()
             }
         }
@@ -144,6 +149,45 @@ final class FilterViewController: UIViewController {
     @objc func goNext() {
         let shareViewController = ShareViewController(image: imageView.image)
         navigationController?.pushViewController(shareViewController, animated: true)
+    }
+    
+    private func addLongPressGestureRecognizer() {
+        let pressGesture = UILongPressGestureRecognizer(target: self, action: #selector(pressGestureHandler(recognizer:)))
+        pressGesture.minimumPressDuration = 0
+        imageView.addGestureRecognizer(pressGesture)
+        imageView.isUserInteractionEnabled = true
+    }
+    
+    /// Показывает оригинальное изображение, пока держишь палец.
+    @objc private func pressGestureHandler(recognizer: UILongPressGestureRecognizer) {
+        switch recognizer.state {
+        case .began:
+            currentImage = imageView.image
+            imageView.image = initialImage
+        case .ended:
+            imageView.image = currentImage
+        default:
+            ()
+        }
+    }
+    
+    /// Показывает сообщение, что можно увидеть оригинал, если дотронуться до картинки. Затем сообщение исчезает.
+    func showHint() {
+        let button = UIButton(type: .system)
+        button.setTitle("Tap and hold for original", for: .normal)
+        button.tintColor = .darkGray
+        button.backgroundColor = .lightGray
+        button.layer.cornerRadius = 5
+        button.contentEdgeInsets = UIEdgeInsets(top: 3, left: 6, bottom: 3, right: 6)
+        button.sizeToFit()
+        button.center.x = imageView.center.x
+        button.center.y = imageView.frame.maxY - 20
+        view.addSubview(button)
+        UIView.animate(withDuration: 0.5, delay: 0.7, options: [.curveEaseInOut], animations: {
+            button.alpha = 0
+        }) { _ in
+            button.removeFromSuperview()
+        }
     }
     
 }
