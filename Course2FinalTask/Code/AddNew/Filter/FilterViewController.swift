@@ -13,7 +13,11 @@ final class FilterViewController: UIViewController {
     
     private let initialImage: UIImage
     private var currentImage: UIImage? = nil
-    let imageView = UIImageView()
+    let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     let thumbnailImage: UIImage
     var filteredThumbnailImagesDictionary: [String: UIImage] = [:]
     private lazy var collectionView: UICollectionView = {
@@ -60,19 +64,29 @@ final class FilterViewController: UIViewController {
         super.viewDidLoad()
         
         title = "Filters"
+        view.backgroundColor = .white
         
+        addSubViews()
+        setupLayout()
         addLongPressGestureRecognizer()
+        setThumbnailImages()
         
-        imageView.contentMode = .scaleAspectFit
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", style: .done, target: self, action: #selector(goNext))
+    }
+    
+    private func addSubViews() {
+        view.addSubview(imageView)
+        view.addSubview(collectionView)
+        [activityIndicatorShadowView, activityIndicator].forEach { view.addSubview($0) }
+    }
+    
+    private func setupLayout() {
         imageView.frame = CGRect(
             x: 0,
             y: navigationController?.navigationBar.frame.maxY ?? 0,
             width: view.frame.width,
             height: view.frame.width
         )
-        view.addSubview(imageView)
-        view.addSubview(collectionView)
-        [activityIndicatorShadowView, activityIndicator].forEach { view.addSubview($0) }
 
         collectionView.frame = CGRect(
             x: 0,
@@ -87,12 +101,6 @@ final class FilterViewController: UIViewController {
             width: view.bounds.width,
             height: view.bounds.height
         )
-        
-        view.backgroundColor = .white
-        
-        setThumbnailImages()
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", style: .done, target: self, action: #selector(goNext))
     }
     
     private func setThumbnailImages() {

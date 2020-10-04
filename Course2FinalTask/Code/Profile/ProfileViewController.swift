@@ -143,7 +143,7 @@ final class ProfileViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    /// Текущий отступ у скролл вью. Нужен для корректной перемотки скролл вью в самое начало.
+    /// Текущий отступ у скролл вью. Нужен для корректной перемотки скролл вью в самое начало при обновлении контента.
     private lazy var offset = CGPoint(
         x: -scrollView.adjustedContentInset.left,
         y: -scrollView.adjustedContentInset.top

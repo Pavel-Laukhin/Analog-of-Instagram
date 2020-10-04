@@ -39,8 +39,10 @@ final class FeedCell: UICollectionViewCell {
         }
     }
     
-    var isCurrentUserLikesThisPost: Bool?
+    private var isCurrentUserLikesThisPost: Bool?
     
+    /// Запущен ли процесс лайка/дизлайка в данный момент
+    private var isInTheProcessOfChangingLikeState = false
     
     // MARK: - Visual properties
     private var avatarImageView: UIImageView = {
@@ -237,36 +239,72 @@ final class FeedCell: UICollectionViewCell {
             guard let isLikeButton = isLikeButton else { return }
             isCurrentUserLikesThisPost = false
             isLikeButton.tintColor = .lightGray
-            DataProviders.shared.postsDataProvider.unlikePost(with: post!.id, queue: queue) { post in
-                if post == nil {
-                    DispatchQueue.main.async {
-                        Alert.showBasic(vc: self.delegate as! UIViewController)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.numberOfLikesLabel.text = "Likes: \(post!.likedByCount)"
-                        self.numberOfLikesLabel.sizeToFit()
-                    }
-                }
+            if !isInTheProcessOfChangingLikeState {
+                isInTheProcessOfChangingLikeState = true
+                toMarkAsUnliked()
             }
         case false:
             guard let isLikeButton = isLikeButton else { return }
             isCurrentUserLikesThisPost = true
             isLikeButton.tintColor = .systemBlue
-            DataProviders.shared.postsDataProvider.likePost(with: post!.id, queue: queue) { post in
-                if post == nil {
-                    DispatchQueue.main.async {
-                        Alert.showBasic(vc: self.delegate as! UIViewController)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        self.numberOfLikesLabel.text = "Likes: \(post!.likedByCount)"
-                        self.numberOfLikesLabel.sizeToFit()
-                    }
-                }
+            if !isInTheProcessOfChangingLikeState {
+                isInTheProcessOfChangingLikeState = true
+                toMarkAsLiked()
             }
         default:
             print("isLikeButtonPressed: ERROR: isCurrentUserLikesThisPost = nil")
+        }
+    }
+    
+    private func toMarkAsUnliked() {
+        DataProviders.shared.postsDataProvider.unlikePost(with: post!.id, queue: queue) { post in
+            guard let post = post else {
+                DispatchQueue.main.async {
+                    Alert.showBasic(vc: self.delegate as! UIViewController)
+                }
+                return
+            }
+            
+            // Прежде чем менять статус лайка, метод должен проверить, не передумал ли юзер, пока процесс выполнялся (не нажал ли юзер снова кнопку Like/Unlike). Если передумал, то тогда нужно запустить обратный процесс:
+            if !(self.isCurrentUserLikesThisPost ?? false) {
+                DispatchQueue.main.async {
+                    self.numberOfLikesLabel.text = "Likes: \(post.likedByCount)"
+                    self.numberOfLikesLabel.sizeToFit()
+                }
+                
+                // Сообщаем, что процесс лайка/дизлайка закончен и меняем соответствующий статус у переменной:
+                print("Unliked in DataProvider")
+                self.isInTheProcessOfChangingLikeState = false
+            } else {
+                print("Unliked in DataProvider BUT NEED TO CHANGE")
+                self.toMarkAsLiked()
+            }
+        }
+    }
+    
+    private func toMarkAsLiked() {
+        DataProviders.shared.postsDataProvider.likePost(with: post!.id, queue: queue) { post in
+            guard let post = post else {
+                DispatchQueue.main.async {
+                    Alert.showBasic(vc: self.delegate as! UIViewController)
+                }
+                return
+            }
+            
+            // Прежде чем менять статус лайка, метод должен проверить, не передумал ли юзер, пока процесс выполнялся (не нажал ли юзер снова кнопку Like/Unlike). Если передумал, то тогда нужно запустить обратный процесс:
+            if self.isCurrentUserLikesThisPost ?? true {
+                DispatchQueue.main.async {
+                    self.numberOfLikesLabel.text = "Likes: \(post.likedByCount)"
+                    self.numberOfLikesLabel.sizeToFit()
+                }
+                
+                // Сообщаем, что процесс лайка/дизлайка закончен и меняем соответствующий статус у переменной:
+                print("Liked in DataProvider")
+                self.isInTheProcessOfChangingLikeState = false
+            } else {
+                print("Liked in DataProvider BUT NEED TO CHANGE")
+                self.toMarkAsUnliked()
+            }
         }
     }
     

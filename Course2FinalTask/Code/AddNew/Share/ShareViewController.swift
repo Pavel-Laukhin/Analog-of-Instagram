@@ -46,11 +46,18 @@ final class ShareViewController: UIViewController {
         textView.translatesAutoresizingMaskIntoConstraints = false
         
         textView.becomeFirstResponder()
+        textView.delegate = self
         
         return textView
     }()
     
-    let queue = DispatchQueue.global()
+    /// Максимально допустимое количество символов в описании.
+    private let maxCharactersLimit: Int = 300
+    
+    /// Максимально допустимое количество строк в описании.
+    private let maxLinesLimit: Int = 7
+        
+    private let queue = DispatchQueue.global()
     
     init(image: UIImage?) {
         self.imageView.image = image
@@ -118,6 +125,28 @@ final class ShareViewController: UIViewController {
                     rootVC.updateFeed()
             }
         }
+    }
+    
+}
+
+// Сделаем ограничение для количества символов в строке длиной в 500 символов
+extension ShareViewController: UITextViewDelegate {
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        // Устанавливаем ограничение по количество вводимых символов
+        textView.text = String(textView.text.prefix(maxCharactersLimit))
+        
+        // Устанавливаем ограничение по количеству строк таким образом, чтобы textView могла растянуться максимум до низа экрана. Если на экране есть таб бар, то до него, если нет, то тогда до самого низа
+        guard let textViewFont = textView.font else { return false }
+        let newText = (textView.text as NSString).replacingCharacters(in: range, with: text)
+        let textAttributes = [NSAttributedString.Key.font : textViewFont]
+        var textWidth: CGFloat = textView.frame.inset(by: textView.textContainerInset).width
+        textWidth -= 2.0 * textView.textContainer.lineFragmentPadding
+        let boundingRect: CGRect = newText.boundingRect(with: CGSize(width: textWidth, height: 0), options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: textAttributes, context: nil)
+        let numberOfLines = Int(floor(boundingRect.height / textViewFont.lineHeight))
+        
+        return numberOfLines <= maxLinesLimit
     }
     
 }
