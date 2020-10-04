@@ -10,14 +10,14 @@ import UIKit
 
 extension FeedViewController: UICollectionViewDelegateFlowLayout {
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-
-        let width = view.bounds.width
-        let imageHeight = width
-        let height = LayoutConstants.topOffset + LayoutConstants.avatarHeight + LayoutConstants.topPostImageOffset + imageHeight + LayoutConstants.isLikeIconHeight + LayoutConstants.descriptionHeight
-
-        return CGSize(width: width, height: height)
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//
+//        let width = view.bounds.width
+//        let imageHeight = width
+//        let height = LayoutConstants.topOffset + LayoutConstants.avatarHeight + LayoutConstants.topPostImageOffset + imageHeight + LayoutConstants.isLikeIconHeight + LayoutConstants.descriptionHeight
+//
+//        return CGSize(width: width, height: height)
+//    }
     
 }
 

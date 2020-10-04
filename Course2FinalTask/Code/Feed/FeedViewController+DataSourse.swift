@@ -22,7 +22,7 @@ extension FeedViewController: UICollectionViewDataSource {
         cell.backgroundColor = .white
         
         cell.post = allPosts?[indexPath.item]
-        
+        cell.maxWidth = view.frame.width
         cell.delegate = self
         cell.callback = { [weak self] authorId in
             self?.turnActivityOn()

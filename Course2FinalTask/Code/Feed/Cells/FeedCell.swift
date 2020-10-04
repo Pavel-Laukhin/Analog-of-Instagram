@@ -99,6 +99,19 @@ final class FeedCell: UICollectionViewCell {
         return tgr
     }()
     
+    /// Данный констрейнт поможет сделать descriptionLabel растягивающимся вниз
+    private lazy var maxWidthConstraint = NSLayoutConstraint(item: descriptionLabel, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: .zero)
+    
+    /// Максимальная ширина, которая поможет сделать descriptionLabel растягивающимся вниз
+    lazy var maxWidth: CGFloat? = nil {
+        didSet {
+            guard let maxWidth = maxWidth else { return }
+            contentView.translatesAutoresizingMaskIntoConstraints = false
+            maxWidthConstraint.constant = maxWidth - 30
+            maxWidthConstraint.isActive = true
+        }
+    }
+    
     deinit {
         
         // Обнуление визуальных данных ячейки:
@@ -161,83 +174,60 @@ final class FeedCell: UICollectionViewCell {
     private func addGestureRecognizer() {
         contentView.addGestureRecognizer(doubleTapGestureRecognizer)
         contentView.addGestureRecognizer(tapGestureRecognizer)
-        
-//        // Второй способ добавления распознавателя жестов:
-//        postImageView.addGestureRecognizer(doubleTapGestureRecognizer)
-//        // Эти методы надо создавать отдельно, так как один и тот же распознаватель будет работать лишь с тем вью, на который он был добавлен последним (почему-то именно так работает):
-//        avatarImageView.addGestureRecognizer(avatarTapGestureRecognizer)
-//        authorNameLabel.addGestureRecognizer(authorTapGestureRecognizer)
-//        numberOfLikesLabel.addGestureRecognizer(likedByTapGestureRecognizer)
-//        // Втрой способ требует включения этого свойства:
-//        postImageView.isUserInteractionEnabled = true
-//        avatarImageView.isUserInteractionEnabled = true
-//        authorNameLabel.isUserInteractionEnabled = true
-//        numberOfLikesLabel.isUserInteractionEnabled = true
     }
     
     // Теперь настроим фреймы:
     private func setupLayout() {
-        
-        avatarImageView.frame = CGRect(
-            x: 15,
-            y: 8,
-            width: 35,
-            height: 35
-        )
-        
-        authorNameLabel.sizeToFit()
-        authorNameLabel.frame = CGRect(
-            x: avatarImageView.frame.maxX + 8,
-            y: 8,
-            width: contentView.bounds.width - (avatarImageView.frame.maxX + 8),
-            height: authorNameLabel.frame.height
-        )
-        authorNameLabel.sizeToFit()
-        
-        dateLabel.sizeToFit()
-        dateLabel.frame = CGRect(
-            x: avatarImageView.frame.maxX + 8,
-            y: avatarImageView.frame.maxY - dateLabel.frame.height,
-            width: contentView.bounds.width - (avatarImageView.frame.maxX + 8),
-            height: dateLabel.frame.height
-        )
-        dateLabel.sizeToFit()
-        
-        postImageView.frame = CGRect(
-            x: 0,
-            y: avatarImageView.frame.maxY + 8,
-            width: contentView.bounds.width,
-            height: contentView.bounds.width
-        )
-        
-        bigLikeImageView.sizeToFit()
-        bigLikeImageView.center = postImageView.center
-        
+                
         guard let isLikeButton = isLikeButton  else { return }
-        isLikeButton.frame = CGRect(
-            x: contentView.bounds.width - 15 - 44,
-            y: postImageView.frame.maxY,
-            width: 44,
-            height: 44
-        )
         
-        numberOfLikesLabel.sizeToFit()
-        numberOfLikesLabel.frame = CGRect(
-            x: 15,
-            y: 0,
-            width: numberOfLikesLabel.frame.width,
-            height: numberOfLikesLabel.frame.height
-        )
-        numberOfLikesLabel.center.y = isLikeButton.center.y
+        deactivateAutoresizingMask(in: [
+            avatarImageView,
+            authorNameLabel,
+            dateLabel,
+            postImageView,
+            isLikeButton,
+            numberOfLikesLabel,
+            descriptionLabel,
+            bigLikeImageView
+        ])
         
-        descriptionLabel.sizeToFit()
-        descriptionLabel.frame = CGRect(
-            x: 15,
-            y: isLikeButton.frame.maxY,
-            width: contentView.bounds.width - 15 - 15,
-            height: descriptionLabel.frame.height
-        )
-        descriptionLabel.sizeToFit()
+        NSLayoutConstraint.activate([
+            avatarImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 35),
+            avatarImageView.heightAnchor.constraint(equalToConstant: 35),
+            
+            
+            authorNameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
+            authorNameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
+            authorNameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+
+            dateLabel.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
+            dateLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
+            dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 15),
+
+            postImageView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8),
+            postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            postImageView.heightAnchor.constraint(equalTo: postImageView.widthAnchor),
+            
+            isLikeButton.topAnchor.constraint(equalTo: postImageView.bottomAnchor),
+            isLikeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            isLikeButton.widthAnchor.constraint(equalToConstant: 44),
+            isLikeButton.heightAnchor.constraint(equalToConstant: 44),
+
+            numberOfLikesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            numberOfLikesLabel.centerYAnchor.constraint(equalTo: isLikeButton.centerYAnchor),
+            
+            descriptionLabel.topAnchor.constraint(equalTo: isLikeButton.bottomAnchor),
+            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
+            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            bigLikeImageView.centerXAnchor.constraint(equalTo: postImageView.centerXAnchor),
+            bigLikeImageView.centerYAnchor.constraint(equalTo: postImageView.centerYAnchor)
+        ])
     }
     
     // MARK: - Actions
@@ -319,5 +309,13 @@ final class FeedCell: UICollectionViewCell {
 extension FeedCell {
     
     var queue: DispatchQueue { DispatchQueue.global() }
+    
+}
+
+extension FeedCell {
+    
+    private func deactivateAutoresizingMask(in views: [UIView]) {
+        views.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+    }
     
 }

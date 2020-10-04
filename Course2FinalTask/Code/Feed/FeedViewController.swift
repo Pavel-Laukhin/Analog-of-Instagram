@@ -60,6 +60,12 @@ final class FeedViewController: UIViewController {
         setUpSubviews()
         turnActivityOn()
         
+        // Задаем автоматический размер айтемов у коллекшн вью:
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+            print("estimatedItemSize is automaticSize")
+        }
+        
         // Загружаем посты:
         dispatchGroup.enter()
         DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
