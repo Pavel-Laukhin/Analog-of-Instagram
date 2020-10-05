@@ -383,6 +383,7 @@ final class ProfileViewController: UIViewController {
             if self.isFollowed ?? true {
                 DispatchQueue.main.async {
                     self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
+                    self.followersButton.sizeToFit()
                 }
                 
                 // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
@@ -406,6 +407,7 @@ final class ProfileViewController: UIViewController {
             if !(self.isFollowed ?? false) {
                 DispatchQueue.main.async {
                     self.followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
+                    self.followersButton.sizeToFit()
                 }
                 
                 // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
