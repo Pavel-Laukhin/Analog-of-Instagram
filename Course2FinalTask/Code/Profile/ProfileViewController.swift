@@ -144,10 +144,13 @@ final class ProfileViewController: UIViewController {
     }
     
     /// Текущий отступ у скролл вью. Нужен для корректной перемотки скролл вью в самое начало при обновлении контента.
-    private lazy var offset = CGPoint(
-        x: -scrollView.adjustedContentInset.left,
-        y: -scrollView.adjustedContentInset.top
-    )
+    private var offset: CGPoint {
+        get {
+            return CGPoint(x: -scrollView.adjustedContentInset.left,
+                           y: -scrollView.adjustedContentInset.top
+            )
+        }
+    }
     
     // MARK: - Life cycle
     override func viewDidLoad() {
