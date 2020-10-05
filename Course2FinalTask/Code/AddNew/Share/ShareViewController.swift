@@ -52,7 +52,7 @@ final class ShareViewController: UIViewController {
     }()
     
     /// Максимально допустимое количество символов в описании.
-    private let maxCharactersLimit: Int = 300
+    private let maxCharactersLimit: Int = 160
     
     /// Максимально допустимое количество строк в описании.
     private let maxLinesLimit: Int = 7
@@ -135,7 +135,9 @@ extension ShareViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         
         // Устанавливаем ограничение по количество вводимых символов
-        textView.text = String(textView.text.prefix(maxCharactersLimit))
+        if textView.text.count + (text.count - range.length) >= maxCharactersLimit {
+            return false
+        }
         
         // Устанавливаем ограничение по количеству строк таким образом, чтобы textView могла растянуться максимум до низа экрана. Если на экране есть таб бар, то до него, если нет, то тогда до самого низа
         guard let textViewFont = textView.font else { return false }
