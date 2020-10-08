@@ -68,14 +68,16 @@ final class FeedViewController: UIViewController {
         
         // Загружаем посты:
         dispatchGroup.enter()
-        DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
+        DataProviders.shared.postsDataProvider.feed(queue: queue) { [weak self] posts in
+            guard let self = self else { return }
             self.allPosts = posts
             self.dispatchGroup.leave()
         }
         
         // Находим текущего юзера:
         dispatchGroup.enter()
-        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { user in
+        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { [weak self] user in
+            guard let self = self else { return }
             guard let user = user else {
                 Alert.showBasic(vc: self)
                 print("Current user returned as nil")
@@ -124,7 +126,8 @@ extension FeedViewController: TransitionProtocol {
         turnActivityOn()
         
         // Ищем список пользователей, лайкнувших пост:
-        DataProviders.shared.postsDataProvider.usersLikedPost(with: postId, queue: self.queue) { arrayOfUsers in
+        DataProviders.shared.postsDataProvider.usersLikedPost(with: postId, queue: self.queue) { [weak self] arrayOfUsers in
+            guard let self = self else { return }
             if arrayOfUsers == nil {
                 
                 // Показываем алерт о неизвестной ошибке:
@@ -159,7 +162,8 @@ extension FeedViewController: TransitionProtocol {
         } else {
             
             // Ищем пользователя:
-            DataProviders.shared.usersDataProvider.user(with: userId, queue: self.queue) { user in
+            DataProviders.shared.usersDataProvider.user(with: userId, queue: self.queue) { [weak self] user in
+                guard let self = self else { return }
                 guard let user = user else {
                     
                     // Показываем алерт о неизвестной ошибке:
@@ -223,7 +227,8 @@ extension FeedViewController {
         }
         
         // Обновляем feed и перезагружаем коллекцию:
-        DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
+        DataProviders.shared.postsDataProvider.feed(queue: queue) { [weak self] posts in
+            guard let self = self else { return }
             DispatchQueue.main.async {
                 self.allPosts = posts
                 self.collectionView.reloadData()

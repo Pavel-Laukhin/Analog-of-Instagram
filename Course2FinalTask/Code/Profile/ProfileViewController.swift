@@ -198,7 +198,8 @@ final class ProfileViewController: UIViewController {
     }
     
     private func updateAllPosts() {
-        DataProviders.shared.postsDataProvider.feed(queue: queue) { posts in
+        DataProviders.shared.postsDataProvider.feed(queue: queue) { [weak self] posts in
+            guard let self = self else { return }
             if let posts = posts {
                 self.allPosts = posts
                 self.isInNeedOfUpdating = false

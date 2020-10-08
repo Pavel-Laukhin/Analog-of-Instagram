@@ -15,7 +15,7 @@ enum TransitionState {
 
 final class FeedCell: UICollectionViewCell {
     
-    var delegate: TransitionProtocol?
+    weak var delegate: TransitionProtocol?
     
     // Реализация перехода с помощью колбэка (чисто для себя потестить, как это работает):
     var callback: ((User.Identifier) -> Void)?
@@ -45,43 +45,43 @@ final class FeedCell: UICollectionViewCell {
     private var isInTheProcessOfChangingLikeState = false
     
     // MARK: - Visual properties
-    private var avatarImageView: UIImageView = {
+    private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    private var authorNameLabel: UILabel = {
+    private lazy var authorNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .black
         return label
     }()
-    private var dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .black
         return label
     }()
-    private var postImageView: UIImageView = {
+    private lazy var postImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
-    private var numberOfLikesLabel: UILabel = {
+    private lazy var numberOfLikesLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .black
         return label
     }()
     private weak var isLikeButton: UIButton?
-    private var descriptionLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .black
         label.numberOfLines = 0
         return label
     }()
-    private var bigLikeImageView: UIImageView = {
+    private lazy var bigLikeImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "bigLike")
         imageView.alpha = 0
@@ -89,13 +89,13 @@ final class FeedCell: UICollectionViewCell {
     }()
     
     // MARK: - Gesture recognizers
-    lazy private var doubleTapGestureRecognizer: UITapGestureRecognizer = {
+    private lazy var doubleTapGestureRecognizer: UITapGestureRecognizer = {
         let tgr = UITapGestureRecognizer(target: self, action: #selector(doubleTapHandler(sender:)))
         tgr.numberOfTapsRequired = 2
         return tgr
     }()
     
-    lazy private var tapGestureRecognizer: UITapGestureRecognizer = {
+    private lazy var tapGestureRecognizer: UITapGestureRecognizer = {
         let tgr = UITapGestureRecognizer(target: self, action: #selector(tapHandler(sender:)))
         tgr.numberOfTapsRequired = 1
         return tgr
@@ -114,19 +114,21 @@ final class FeedCell: UICollectionViewCell {
         }
     }
     
-    deinit {
-        
-        // Обнуление визуальных данных ячейки:
-        postImageView.image = nil
-        avatarImageView.image = nil
-        authorNameLabel.text = ""
-        dateLabel.text = ""
-        numberOfLikesLabel.text = ""
-        descriptionLabel.text = ""
-        
-        // Обнуление данных ячейки:
-        post = nil
-    }
+//    deinit {
+//        
+//        print("deinit")
+//        
+//        // Обнуление визуальных данных ячейки:
+//        postImageView.image = nil
+//        avatarImageView.image = nil
+//        authorNameLabel.text = nil
+//        dateLabel.text = nil
+//        numberOfLikesLabel.text = nil
+//        descriptionLabel.text = nil
+////
+////        // Обнуление данных ячейки:
+////        post = nil
+//    }
     
     // MARK: - Life cycle
     private func addIsLikeButton() {
@@ -257,7 +259,8 @@ final class FeedCell: UICollectionViewCell {
     }
     
     private func toMarkAsUnliked() {
-        DataProviders.shared.postsDataProvider.unlikePost(with: post!.id, queue: queue) { post in
+        DataProviders.shared.postsDataProvider.unlikePost(with: post!.id, queue: queue) { [weak self] post in
+            guard let self = self else { return }
             guard let post = post else {
                 DispatchQueue.main.async {
                     Alert.showBasic(vc: self.delegate as! UIViewController)
@@ -283,7 +286,8 @@ final class FeedCell: UICollectionViewCell {
     }
     
     private func toMarkAsLiked() {
-        DataProviders.shared.postsDataProvider.likePost(with: post!.id, queue: queue) { post in
+        DataProviders.shared.postsDataProvider.likePost(with: post!.id, queue: queue) { [weak self] post in
+            guard let self = self else { return }
             guard let post = post else {
                 DispatchQueue.main.async {
                     Alert.showBasic(vc: self.delegate as! UIViewController)
