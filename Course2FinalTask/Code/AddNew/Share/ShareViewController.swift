@@ -80,8 +80,7 @@ final class ShareViewController: UIViewController {
     private func addSubviews() {
         [imageView,
         label,
-        textView
-            ].forEach { view.addSubview($0)}
+        textView].forEach { view.addSubview($0)}
     }
     
     private func setLayout() {
@@ -116,9 +115,11 @@ final class ShareViewController: UIViewController {
         guard let image = imageView.image,
               let rootVC = self.navigationController?.viewControllers[0] as? NewPostViewController else { return }
         rootVC.startAnimating()
-        DataProviders.shared.postsDataProvider.newPost(with: image, description: textView.text, queue: queue) { post in
+        DataProviders.shared.postsDataProvider.newPost(with: image, description: textView.text, queue: queue) { [weak self] post in
             guard post != nil else {
-                Alert.showBasic(vc: self)
+                if let self = self {
+                    Alert.showBasic(vc: self)
+                }
                 return
             }
             DispatchQueue.main.async {

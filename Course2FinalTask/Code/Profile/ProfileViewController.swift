@@ -223,8 +223,7 @@ final class ProfileViewController: UIViewController {
          collectionView,
          toFollowButton,
          activityIndicatorShadowView,
-         activityIndicator
-        ].forEach { scrollView.addSubview($0) }
+         activityIndicator].forEach { scrollView.addSubview($0) }
     }
     
     private func setUpLayout() {

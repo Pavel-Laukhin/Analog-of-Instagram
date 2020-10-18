@@ -106,8 +106,9 @@ final class FilterViewController: UIViewController {
     private func setThumbnailImages() {
         for filter in Filters.filtersArray where filter.title != "Normal" {
             let operation = FilterImageOperation(inputImage: imageView.image, filter: filter.filter)
-            operation.completionBlock = {
-                guard let outputImage = operation.outputImage else { return }
+            operation.completionBlock = { [weak self] in
+                guard let self = self,
+                      let outputImage = operation.outputImage else { return }
                 
                 // Чтобы избежать race condition, будем обновлять словарь в последовательной очереди главного потока:
                 DispatchQueue.main.async {
@@ -129,8 +130,9 @@ final class FilterViewController: UIViewController {
         let filter = Filters.filtersArray[selectedItemNumber].filter
         let operation = FilterImageOperation(inputImage: initialImage, filter: filter)
         operation.completionBlock = {
-            DispatchQueue.main.async {
-                guard let outputImage = operation.outputImage else { return }
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self,
+                      let outputImage = operation.outputImage else { return }
                 self.imageView.image = outputImage
                 self.showHint()
                 self.turnActivityOff()

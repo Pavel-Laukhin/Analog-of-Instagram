@@ -10,13 +10,13 @@ import UIKit
 
 class FilterImageOperation: Operation {
     
-    private var _inputImage: UIImage?
+    private var inputImage: UIImage?
     private(set) var outputImage: UIImage?
-    private var _chosenFilter: String?
+    private var chosenFilter: String?
     
     init(inputImage: UIImage?, filter: String) {
-        self._chosenFilter = filter
-        self._inputImage = inputImage
+        self.chosenFilter = filter
+        self.inputImage = inputImage
     }
     
     override func main() {
@@ -25,10 +25,12 @@ class FilterImageOperation: Operation {
         let context = CIContext()
         
         // Создаем CIImage
-        guard let coreImage = CIImage(image: _inputImage!) else { return }
+        guard let inputImage = inputImage,
+              let coreImage = CIImage(image: inputImage) else { return }
         
         // Создаем фильтр
-        guard let filter = CIFilter(name: _chosenFilter!) else { return }
+        guard let chosenFilter = chosenFilter,
+              let filter = CIFilter(name: chosenFilter) else { return }
         filter.setValue(coreImage, forKey: kCIInputImageKey)
         
         // Добавляем фильтр к изображению

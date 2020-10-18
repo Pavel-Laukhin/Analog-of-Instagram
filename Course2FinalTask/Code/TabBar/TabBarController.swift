@@ -63,8 +63,8 @@ final class TabBarController: UITabBarController {
         
         // Загружаем информацию о текущем юзере
         let queue = DispatchQueue.global(qos: .utility)
-        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { user in
-            guard let user = user else {
+        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { [weak self] user in
+            guard let self = self, let user = user else {
                 print("AppDelegate: ERROR: currentUser not found")
                 return
             }

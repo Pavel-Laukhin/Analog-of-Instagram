@@ -114,22 +114,6 @@ final class FeedCell: UICollectionViewCell {
         }
     }
     
-//    deinit {
-//        
-//        print("deinit")
-//        
-//        // Обнуление визуальных данных ячейки:
-//        postImageView.image = nil
-//        avatarImageView.image = nil
-//        authorNameLabel.text = nil
-//        dateLabel.text = nil
-//        numberOfLikesLabel.text = nil
-//        descriptionLabel.text = nil
-////
-////        // Обнуление данных ячейки:
-////        post = nil
-//    }
-    
     // MARK: - Life cycle
     private func addIsLikeButton() {
         let button = UIButton(type: .system)
@@ -170,8 +154,7 @@ final class FeedCell: UICollectionViewCell {
          postImageView,
          numberOfLikesLabel,
          descriptionLabel,
-         bigLikeImageView
-            ].forEach { contentView.addSubview($0) }
+         bigLikeImageView].forEach { contentView.addSubview($0) }
     }
     
     // Добавляем распознаватель жестов

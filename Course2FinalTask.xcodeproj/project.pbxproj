@@ -22,7 +22,6 @@
 		E92D4830251E256700175D0E /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D482F251E256700175D0E /* ShareViewController.swift */; };
 		E941B69024F84CCA008701E3 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E941B68F24F84CCA008701E3 /* Alert.swift */; };
 		E968F75324AFAB8300BFAC70 /* LayoutConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E968F75224AFAB8300BFAC70 /* LayoutConstants.swift */; };
-		E968F75624B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = E968F75524B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift */; };
 		E9764D4024AE52620073C8E7 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9764D3F24AE52620073C8E7 /* FeedViewController.swift */; };
 		E9764D4224AE529B0073C8E7 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9764D4124AE529B0073C8E7 /* ProfileViewController.swift */; };
 		E9764D4424AE65D30073C8E7 /* FeedViewController+DataSourse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9764D4324AE65D30073C8E7 /* FeedViewController+DataSourse.swift */; };
@@ -34,7 +33,6 @@
 		E9A23D7C24B208E20017BB7E /* ProfileViewController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D7B24B208E20017BB7E /* ProfileViewController+Delegate.swift */; };
 		E9A23D7F24B2E6400017BB7E /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D7E24B2E6400017BB7E /* TableViewController.swift */; };
 		E9A23D8124B2E9580017BB7E /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D8024B2E9580017BB7E /* TableViewCell.swift */; };
-		E9A23D8324B319840017BB7E /* FeedCell(Draft).swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D8224B319840017BB7E /* FeedCell(Draft).swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,7 +66,6 @@
 		E92D482F251E256700175D0E /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		E941B68F24F84CCA008701E3 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
 		E968F75224AFAB8300BFAC70 /* LayoutConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutConstants.swift; sourceTree = "<group>"; };
-		E968F75524B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewController+DelegateFlowLayout.swift"; sourceTree = "<group>"; };
 		E9764D3F24AE52620073C8E7 /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		E9764D4124AE529B0073C8E7 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		E9764D4324AE65D30073C8E7 /* FeedViewController+DataSourse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewController+DataSourse.swift"; sourceTree = "<group>"; };
@@ -80,7 +77,6 @@
 		E9A23D7B24B208E20017BB7E /* ProfileViewController+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileViewController+Delegate.swift"; sourceTree = "<group>"; };
 		E9A23D7E24B2E6400017BB7E /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		E9A23D8024B2E9580017BB7E /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
-		E9A23D8224B319840017BB7E /* FeedCell(Draft).swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedCell(Draft).swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,7 +201,6 @@
 			isa = PBXGroup;
 			children = (
 				E9764D3F24AE52620073C8E7 /* FeedViewController.swift */,
-				E968F75524B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift */,
 				E9764D4324AE65D30073C8E7 /* FeedViewController+DataSourse.swift */,
 				E968F75224AFAB8300BFAC70 /* LayoutConstants.swift */,
 				E9764D4924AF7F430073C8E7 /* Cells */,
@@ -217,7 +212,6 @@
 			isa = PBXGroup;
 			children = (
 				E9764D4524AE67F20073C8E7 /* FeedCell.swift */,
-				E9A23D8224B319840017BB7E /* FeedCell(Draft).swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -339,10 +333,8 @@
 				E941B69024F84CCA008701E3 /* Alert.swift in Sources */,
 				E9A23D7F24B2E6400017BB7E /* TableViewController.swift in Sources */,
 				E97820FD2527AF8600C7BD1B /* ActivityIndicatorViewController.swift in Sources */,
-				E9A23D8324B319840017BB7E /* FeedCell(Draft).swift in Sources */,
 				E91E5D70251A85E900A15439 /* Filters.swift in Sources */,
 				E9A23D7A24B2045A0017BB7E /* ProfileFeedCell.swift in Sources */,
-				E968F75624B0B89300BFAC70 /* FeedViewController+DelegateFlowLayout.swift in Sources */,
 				E9A23D8124B2E9580017BB7E /* TableViewCell.swift in Sources */,
 				E9764D4424AE65D30073C8E7 /* FeedViewController+DataSourse.swift in Sources */,
 				E9A23D7824B1F3BD0017BB7E /* ProfileViewController+DataSource.swift in Sources */,
