@@ -20,7 +20,6 @@ final class FeedViewController: UIViewController {
         collectionView.register(FeedCell.self, forCellWithReuseIdentifier: String(describing: FeedCell.self))
         // 4. Указываем наш контроллер источником информации и делегатом:
         collectionView.dataSource = self
-        collectionView.delegate = self
         // 5.Возвращаем результат:
         return collectionView
     }()
