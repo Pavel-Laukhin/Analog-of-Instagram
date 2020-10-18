@@ -25,19 +25,20 @@ extension FeedViewController: UICollectionViewDataSource {
         cell.maxWidth = view.frame.width
         cell.delegate = self
         cell.callback = { [weak self] authorId in
-            self?.turnActivityOn()
-            DataProviders.shared.usersDataProvider.user(with: authorId, queue: self?.queue) { user in
+            guard let self = self else { return }
+            self.turnActivityOn()
+            DataProviders.shared.usersDataProvider.user(with: authorId, queue: self.queue) { user in
                 if let user = user {
                     DispatchQueue.main.async {
-                        self?.turnActivityOff()
-                        if let allPosts = self?.allPosts {
-                            self?.navigationController?.pushViewController(ProfileViewController(user: user, allPosts: allPosts), animated: true)
+                        self.turnActivityOff()
+                        if let allPosts = self.allPosts {
+                            self.navigationController?.pushViewController(ProfileViewController(user: user, allPosts: allPosts), animated: true)
                         }
                     }
                 } else {
                     DispatchQueue.main.async {
-                        self?.turnActivityOff()
-                        Alert.showBasic(vc: self!)
+                        self.turnActivityOff()
+                        Alert.showBasic(vc: self)
                     }
                 }
             }
