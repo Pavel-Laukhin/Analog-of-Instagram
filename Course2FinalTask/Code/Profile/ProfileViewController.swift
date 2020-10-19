@@ -41,6 +41,9 @@ final class ProfileViewController: UIViewController {
     /// Свойство, говорящее о том, что в feed были внесены изменения и поэтому необходимо обновить allPosts
     var isInNeedOfUpdating = false
     
+    /// Свойство, говорящее о том, что в подписки были внесены изменения и поэтому необходимо обновить
+    var isInNeedOfUpdatingNumberOfFollows = false
+    
     // MARK: - Visual elements
     private var avatarImageView: UIImageView = {
         let imageView = UIImageView()
@@ -173,6 +176,26 @@ final class ProfileViewController: UIViewController {
             
             // Обновляем посты:
             updateAllPosts()
+        }
+        
+        if isInNeedOfUpdatingNumberOfFollows {
+            updateNumberOfFollows()
+        }
+    }
+    
+    private func updateNumberOfFollows() {
+        DataProviders.shared.usersDataProvider.currentUser(queue: queue) { [weak self] user in
+            guard let self = self,
+                  let user = user  else { return }
+            
+            self.currentUser = user
+            self.isInNeedOfUpdatingNumberOfFollows = false
+            
+            // Меняем число подписок:
+            DispatchQueue.main.async {
+                self.followingButton.setAttributedTitle(NSAttributedString(string: "Following: \(user.followsCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
+                self.followersButton.sizeToFit()
+            }
         }
     }
     
@@ -392,6 +415,17 @@ final class ProfileViewController: UIViewController {
                 // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
                 print("user: \(String(describing: self.user.username)): Followed in DataProvider")
                 self.isInTheProcessOfChangingSubscription = false
+                
+                // Включаем необходимость обновить количество подписок в контроллере ProfileViewController:
+                self.queue.async {
+                    DispatchQueue.main.async {
+                        if let profileNavController = self.navigationController?.tabBarController?.viewControllers?[2] as? UINavigationController,
+                           let profileVC = profileNavController.viewControllers[0] as? ProfileViewController {
+                            profileVC.isInNeedOfUpdatingNumberOfFollows = true
+                        }
+                    }
+                }
+                
             } else {
                 print("user: \(String(describing: self.user.username)): Followed in DataProvider BUT NEED TO CHANGE")
                 self.toUnfollow()
@@ -416,6 +450,17 @@ final class ProfileViewController: UIViewController {
                 // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
                 print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider")
                 self.isInTheProcessOfChangingSubscription = false
+                
+                // Включаем необходимость обновить количество подписок в контроллере ProfileViewController:
+                self.queue.async {
+                    DispatchQueue.main.async {
+                        if let profileNavController = self.navigationController?.tabBarController?.viewControllers?[2] as? UINavigationController,
+                           let profileVC = profileNavController.viewControllers[0] as? ProfileViewController {
+                            profileVC.isInNeedOfUpdatingNumberOfFollows = true
+                        }
+                    }
+                }
+                
             } else {
                 print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider BUT NEED TO CHANGE")
                 self.toFollow()
