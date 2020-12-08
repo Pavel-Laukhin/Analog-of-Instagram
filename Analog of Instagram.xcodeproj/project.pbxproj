@@ -51,7 +51,7 @@
 
 /* Begin PBXFileReference section */
 		7484B05320441FD000BDE1A6 /* DataProvider.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DataProvider.framework; sourceTree = "<group>"; };
-		74B79254202B3254006BCB41 /* Course2FinalTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Course2FinalTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		74B79254202B3254006BCB41 /* Analog of Instagram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Analog of Instagram.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74B79257202B3254006BCB41 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74B7925E202B3254006BCB41 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		74B79263202B3254006BCB41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -94,7 +94,7 @@
 		74B7924B202B3254006BCB41 = {
 			isa = PBXGroup;
 			children = (
-				74B79256202B3254006BCB41 /* Course2FinalTask */,
+				74B79256202B3254006BCB41 /* Analog of Instagram */,
 				7484B05320441FD000BDE1A6 /* DataProvider.framework */,
 				74B79255202B3254006BCB41 /* Products */,
 			);
@@ -103,19 +103,19 @@
 		74B79255202B3254006BCB41 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				74B79254202B3254006BCB41 /* Course2FinalTask.app */,
+				74B79254202B3254006BCB41 /* Analog of Instagram.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		74B79256202B3254006BCB41 /* Course2FinalTask */ = {
+		74B79256202B3254006BCB41 /* Analog of Instagram */ = {
 			isa = PBXGroup;
 			children = (
 				74B7927B202B3427006BCB41 /* Code */,
 				74B7927C202B342E006BCB41 /* Resources */,
 				74B7927D202B3434006BCB41 /* Supporting Files */,
 			);
-			path = Course2FinalTask;
+			path = "Analog of Instagram";
 			sourceTree = "<group>";
 		};
 		74B7927B202B3427006BCB41 /* Code */ = {
@@ -247,9 +247,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		74B79253202B3254006BCB41 /* Course2FinalTask */ = {
+		74B79253202B3254006BCB41 /* Analog of Instagram */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 74B79266202B3254006BCB41 /* Build configuration list for PBXNativeTarget "Course2FinalTask" */;
+			buildConfigurationList = 74B79266202B3254006BCB41 /* Build configuration list for PBXNativeTarget "Analog of Instagram" */;
 			buildPhases = (
 				74B79250202B3254006BCB41 /* Sources */,
 				74B79251202B3254006BCB41 /* Frameworks */,
@@ -260,9 +260,9 @@
 			);
 			dependencies = (
 			);
-			name = Course2FinalTask;
+			name = "Analog of Instagram";
 			productName = Course2Week3FinalTask;
-			productReference = 74B79254202B3254006BCB41 /* Course2FinalTask.app */;
+			productReference = 74B79254202B3254006BCB41 /* Analog of Instagram.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -282,7 +282,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 74B7924F202B3254006BCB41 /* Build configuration list for PBXProject "Course2FinalTask" */;
+			buildConfigurationList = 74B7924F202B3254006BCB41 /* Build configuration list for PBXProject "Analog of Instagram" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -295,7 +295,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				74B79253202B3254006BCB41 /* Course2FinalTask */,
+				74B79253202B3254006BCB41 /* Analog of Instagram */,
 			);
 		};
 /* End PBXProject section */
@@ -471,9 +471,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Course2FinalTask/Supporting Files/Info.plist";
+				GCC_PREFIX_HEADER = "${PRODUCT_NAME}";
+				INFOPLIST_FILE = "$(SRCROOT)/Analog of Instagram/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.e-legion.Course2FinalTask";
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_NAME}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -494,9 +495,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "$(SRCROOT)/Course2FinalTask/Supporting Files/Info.plist";
+				GCC_PREFIX_HEADER = "${PRODUCT_NAME}";
+				INFOPLIST_FILE = "$(SRCROOT)/Analog of Instagram/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.e-legion.Course2FinalTask";
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_NAME}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -507,7 +509,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		74B7924F202B3254006BCB41 /* Build configuration list for PBXProject "Course2FinalTask" */ = {
+		74B7924F202B3254006BCB41 /* Build configuration list for PBXProject "Analog of Instagram" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				74B79264202B3254006BCB41 /* Debug */,
@@ -516,7 +518,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		74B79266202B3254006BCB41 /* Build configuration list for PBXNativeTarget "Course2FinalTask" */ = {
+		74B79266202B3254006BCB41 /* Build configuration list for PBXNativeTarget "Analog of Instagram" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				74B79267202B3254006BCB41 /* Debug */,

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "74B79253202B3254006BCB41"
-               BuildableName = "Course2FinalTask.app"
-               BlueprintName = "Course2FinalTask"
-               ReferencedContainer = "container:Course2FinalTask.xcodeproj">
+               BuildableName = "Analog of Instagram.app"
+               BlueprintName = "Analog of Instagram"
+               ReferencedContainer = "container:Analog of Instagram.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "74B79253202B3254006BCB41"
-            BuildableName = "Course2FinalTask.app"
-            BlueprintName = "Course2FinalTask"
-            ReferencedContainer = "container:Course2FinalTask.xcodeproj">
+            BuildableName = "Analog of Instagram.app"
+            BlueprintName = "Analog of Instagram"
+            ReferencedContainer = "container:Analog of Instagram.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "74B79253202B3254006BCB41"
-            BuildableName = "Course2FinalTask.app"
-            BlueprintName = "Course2FinalTask"
-            ReferencedContainer = "container:Course2FinalTask.xcodeproj">
+            BuildableName = "Analog of Instagram.app"
+            BlueprintName = "Analog of Instagram"
+            ReferencedContainer = "container:Analog of Instagram.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
