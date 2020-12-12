@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import DataProvider
 
 enum TransitionState {
     case delegate, callback

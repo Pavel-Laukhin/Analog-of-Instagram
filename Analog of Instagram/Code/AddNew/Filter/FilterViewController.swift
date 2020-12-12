@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import DataProvider
 
 final class FilterViewController: UIViewController {
     
@@ -43,7 +42,7 @@ final class FilterViewController: UIViewController {
     }()
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .white)
+        let indicator = UIActivityIndicatorView(style: .medium)
         indicator.center = view.center
         indicator.isHidden = true
         return indicator

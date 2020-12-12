@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import DataProvider
 
 final class FeedViewController: UIViewController {
     
@@ -46,7 +45,7 @@ final class FeedViewController: UIViewController {
     }()
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .white)
+        let indicator = UIActivityIndicatorView(style: .medium)
         indicator.center = view.center
         indicator.isHidden = true
         return indicator

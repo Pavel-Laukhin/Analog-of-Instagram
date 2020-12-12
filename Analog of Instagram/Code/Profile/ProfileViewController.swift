@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import DataProvider
-
 
 final class ProfileViewController: UIViewController {
     
@@ -129,7 +127,7 @@ final class ProfileViewController: UIViewController {
         return view
     }()
     private lazy var activityIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .white)
+        let indicator = UIActivityIndicatorView(style: .medium)
         indicator.isHidden = true
         return indicator
     }()

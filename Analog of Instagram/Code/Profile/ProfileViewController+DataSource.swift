@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import DataProvider
 
 extension ProfileViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

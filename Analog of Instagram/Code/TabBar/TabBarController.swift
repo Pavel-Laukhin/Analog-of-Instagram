@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import DataProvider
 
 final class TabBarController: UITabBarController {
     
@@ -59,7 +58,6 @@ final class TabBarController: UITabBarController {
         tabBar.items?[0].image = UIImage(named: "feed")
         newPostNavigationController.tabBarItem = UITabBarItem(title: "New", image: UIImage(named: "plus"), tag: 0)
         tabBar.items?[2].image = UIImage(named: "profile")
-        
         
         // Загружаем информацию о текущем юзере
         let queue = DispatchQueue.global(qos: .utility)

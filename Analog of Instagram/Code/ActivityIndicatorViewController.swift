@@ -27,7 +27,17 @@ class ActivityIndicatorViewController: UIViewController {
     class func startAnimating(in viewController: UIViewController) {
         let activityVC = ActivityIndicatorViewController()
         activityVC.modalPresentationStyle = .overFullScreen
-        viewController.navigationController?.tabBarController?.present(activityVC, animated: false, completion: nil)
+//        viewController.navigationController?.tabBarController?.present(activityVC, animated: false, completion: nil)
+        viewController.present(activityVC, animated: false, completion: nil)
+    }
+    
+    /// Выключает анимацию активити индикатора на корневом вью
+    class func stopAnimating() {
+        DispatchQueue.main.async {
+            if let rootVC = UIApplication.shared.windows.filter({$0.isKeyWindow}).first?.rootViewController {
+                rootVC.dismiss(animated: true, completion: nil)
+            }
+        }
     }
     
 }
