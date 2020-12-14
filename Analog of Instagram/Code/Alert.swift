@@ -3,7 +3,7 @@
 //  Course2FinalTask
 //
 //  Created by Павел on 27.08.2020.
-//  Copyright © 2020 e-Legion. All rights reserved.
+//  Copyright © 2020 Pavel Laukhin. All rights reserved.
 //
 
 import Foundation

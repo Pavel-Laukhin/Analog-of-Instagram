@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  Course2FinalTask
 //
-//  Copyright © 2018 e-Legion. All rights reserved.
+//  Copyright © 2020 Pavel Laukhin. All rights reserved.
 //
 
 import UIKit

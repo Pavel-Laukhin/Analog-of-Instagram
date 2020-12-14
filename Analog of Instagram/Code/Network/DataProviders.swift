@@ -3,7 +3,7 @@
 //  Analog of Instagram
 //
 //  Created by Павел on 09.12.2020.
-//  Copyright © 2020 e-Legion. All rights reserved.
+//  Copyright © 2020 Pavel Laukhin. All rights reserved.
 //
 
 import UIKit
