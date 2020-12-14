@@ -40,6 +40,7 @@
 		E9A23D7F24B2E6400017BB7E /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D7E24B2E6400017BB7E /* TableViewController.swift */; };
 		E9A23D8124B2E9580017BB7E /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D8024B2E9580017BB7E /* TableViewCell.swift */; };
 		E9D314552580BA5B00DB82D5 /* DataProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D314542580BA5B00DB82D5 /* DataProviders.swift */; };
+		E9DE388C2587EA2700930FA0 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DE388B2587EA2700930FA0 /* NetworkError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -91,6 +92,7 @@
 		E9A23D7E24B2E6400017BB7E /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		E9A23D8024B2E9580017BB7E /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		E9D314542580BA5B00DB82D5 /* DataProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataProviders.swift; sourceTree = "<group>"; };
+		E9DE388B2587EA2700930FA0 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +140,7 @@
 				E941B68F24F84CCA008701E3 /* Alert.swift */,
 				E955B7052584F20E002775D0 /* Constants.swift */,
 				E97820FC2527AF8600C7BD1B /* ActivityIndicatorViewController.swift */,
+				E9799F722581929600FEB5F6 /* UIView Extension.swift */,
 				E9D314522580BA1B00DB82D5 /* Network */,
 				E9D314532580BA3E00DB82D5 /* Model */,
 				E92A495F2515B57400541921 /* TabBar */,
@@ -145,7 +148,6 @@
 				E91E5D3C2518ABA900A15439 /* AddNew */,
 				E9BAEDBE24B1DA3A00B66E57 /* Profile */,
 				E9A23D7D24B2E6150017BB7E /* Table */,
-				E9799F722581929600FEB5F6 /* UIView Extension.swift */,
 			);
 			path = Code;
 			sourceTree = "<group>";
@@ -268,6 +270,7 @@
 				E955B707258528C9002775D0 /* UsersDataProvider.swift */,
 				E955B70925852906002775D0 /* PostsDataProvider.swift */,
 				E955B70B25852935002775D0 /* PhotosDataProvider.swift */,
+				E9DE388B2587EA2700930FA0 /* NetworkError.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -362,6 +365,7 @@
 				E955B7062584F20E002775D0 /* Constants.swift in Sources */,
 				E9799F7525819AD100FEB5F6 /* User.swift in Sources */,
 				E91E5D6C251A824200A15439 /* FilterViewCell.swift in Sources */,
+				E9DE388C2587EA2700930FA0 /* NetworkError.swift in Sources */,
 				E92D4830251E256700175D0E /* ShareViewController.swift in Sources */,
 				E9799F732581929600FEB5F6 /* UIView Extension.swift in Sources */,
 				E92A49612515B5AC00541921 /* TabBarController.swift in Sources */,

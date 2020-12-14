@@ -18,16 +18,8 @@ protocol DataProvider {
     func signIn(login: String, password: String, completion: @escaping (NetworkError?) -> Void)
     
     /// Деавторизует пользователя и инвалидирует токен.
-    func signOut(queue: DispatchQueue, completion: @escaping (Result<HTTPURLResponse, NetworkError>) -> Void)
+    func signOut(queue: DispatchQueue, completion: @escaping () -> Void)
     
-}
-
-enum NetworkError: Error {
-    case badRequest(String)
-    case noData(String)
-    case noToken(String)
-    case incorrectJSONString(String)
-    case dataTaskError(String)
 }
 
 final class DataProviders: DataProvider {
@@ -95,16 +87,13 @@ final class DataProviders: DataProvider {
         return .success(request)
     }
     
-    func signOut(queue: DispatchQueue, completion: @escaping (Result<HTTPURLResponse, NetworkError>) -> Void) {
+    func signOut(queue: DispatchQueue, completion: @escaping () -> Void) {
         queue.async {
-            guard let request = self.getSignOutRequest() else {
-                completion(.failure(.badRequest("\(#function): Bad URLComponents!")))
-                return
-            }
+            guard let request = self.getSignOutRequest() else { return }
             URLSession.shared.dataTask(with: request) { _, response, _ in
                 guard let httpResponse = response as? HTTPURLResponse else { return }
                 print(#function, "http status code: \(httpResponse.statusCode)")
-                completion(.success(httpResponse))
+                completion()
             }.resume()
         }
     }
@@ -146,7 +135,7 @@ final class DataProviders: DataProvider {
             let path: String
             switch purpose {
             case .currentUser:
-                path = K.Server.currentUserPath
+                path = "/users/me"
             case .user(let userID):
                 path = "/users/\(userID)"
             case .followingUsers(let userID):
@@ -158,7 +147,7 @@ final class DataProviders: DataProvider {
             case .unfollow(_):
                 path = "/users/unfollow"
             case .feed:
-                path = K.Server.feedPath
+                path = "/posts/feed"
             case .usersLiked(let postID):
                 path = "/posts/\(postID)/likes"
             case .like(_):
@@ -218,20 +207,7 @@ final class DataProviders: DataProvider {
         switch purpose {
         case .currentUser, .user(_), .followingUsers(_), .followedUsers(_), .feed, .usersLiked(_):
             request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
-        case .createPost(let image, let description):
-            request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
-            request.httpMethod = "POST"
-            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-            guard let imageData = image.pngData() else { break }
-            let imageBase64String = imageData.base64EncodedString(options: .lineLength64Characters)
-            var jsonDict: [String: String] = [:]
-            jsonDict["image"] = imageBase64String
-            jsonDict["description"] = description
-            if let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict
-                                                          , options: []) {
-                request.httpBody = jsonData
-            }
-        case .follow(_), .unfollow(_), .like(_), .unlike(_):
+        case .follow(_), .unfollow(_), .like(_), .unlike(_), .createPost(_, _):
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
             request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
@@ -243,14 +219,21 @@ final class DataProviders: DataProvider {
                 jsonDict = ["userID": userID]
             case .like(let postID), .unlike(let postID):
                 jsonDict = ["postID": postID]
+            case .createPost(let image, let description):
+                guard let imageData = image.pngData() else { break }
+                let imageBase64String = imageData.base64EncodedString(options: .lineLength64Characters)
+                jsonDict = [:]
+                if jsonDict != nil {
+                    jsonDict!["image"] = imageBase64String
+                    jsonDict!["description"] = description
+                }
             default:
                 jsonDict = nil
             }
-            if let jsonDict = jsonDict,
-               let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict
-                                                          , options: []) {
-                request.httpBody = jsonData
-            }
+            guard let dict = jsonDict,
+               let jsonData = try? JSONSerialization.data(withJSONObject: dict
+                                                          , options: []) else { break }
+            request.httpBody = jsonData
         }
         return request
     }

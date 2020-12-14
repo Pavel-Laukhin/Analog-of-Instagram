@@ -13,19 +13,19 @@ protocol UsersDataProviderProtocol {
     /// Возвращает информацию о текущем пользователе.
     func currentUser(queue: DispatchQueue, completion: @escaping (User?) -> Void)
     
-    /// Возвращает информацию о пользователе с запрошенным ID.
+    /// Возвращает информацию о пользователе с запрошенным ID. В completion передается User в случае успеха; передается nil, если пользователь с запрошенным ID не найден.
     func user(with: User.Identifier, queue: DispatchQueue, completion: @escaping (User?) -> Void)
     
-    /// Возвращает подписчиков пользователя с запрошенным ID.
+    /// Возвращает подписчиков пользователя с запрошенным ID. В completion передается массив [User] в случае успеха; передается nil, если пользователь с запрошенным ID не найден.
     func usersFollowingUser(with: User.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void)
     
-    /// Возвращает подписки пользователя с запрошенным ID.
+    /// Возвращает подписки пользователя с запрошенным ID. В completion передается массив [User] в случае успеха; передается nil, если пользователь с запрошенным ID не найден.
     func usersFollowedByUser(with: User.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void)
     
-    /// Подписывает текущего пользователя на пользователя с запрошенным ID.
+    /// Подписывает текущего пользователя на пользователя с запрошенным ID. В completion передается User, если пользователь успешно подписан или уже является подписчиком; передается nil, если пользователь с запрошенным ID не найден, либо при попытке подписаться на самого себя.
     func follow(_ userID: User.Identifier, queue: DispatchQueue, completion: @escaping (User?) -> Void)
     
-    /// Отписывает текущего пользователя от пользователя с запрошенным ID.
+    /// Отписывает текущего пользователя от пользователя с запрошенным ID. В completion передается User, если пользователь успешно отписан или уже не является подписчиком; передается nil, если пользователь с запрошенным ID не найден, либо при попытке отписаться от самого себя.
     func unfollow(_ userID: User.Identifier, queue: DispatchQueue, completion: @escaping (User?) -> Void)
     
 }

@@ -21,8 +21,6 @@ struct K {
         static let port = 8080
         static let signInPath = "/signin"
         static let signOutPath = "/signout"
-        static let currentUserPath = "/users/me"
-        static let feedPath = "/posts/feed"
     }
     
 }

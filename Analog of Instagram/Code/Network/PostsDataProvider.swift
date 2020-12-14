@@ -13,23 +13,16 @@ protocol PostsDataProviderProtocol {
     /// Возвращает публикации пользователей, на которых подписан текущий пользователь.
     func feed(queue: DispatchQueue, completion: @escaping ([Post]?) -> Void)
     
-//    /// Возвращает пост с запрошенным ID.
-//    func post(queue: DispatchQueue)
-//
-//    /// Возвращает публикации пользователя с запрошенным ID.
-//    func posts(queue: DispatchQueue)
-    
-    /// Возвращает пользователей, поставивших лайк на публикацию с запрошенным ID.
+    /// Возвращает пользователей, поставивших лайк на публикацию с запрошенным ID. В completion передается массив [Post], но если публикация с запрошенным ID не найдена, то передается nil.
     func usersLikedPost(with: Post.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void)
     
-    /// Ставит лайк от текущего пользователя на публикации с запрошенным ID.
+    /// Ставит лайк от текущего пользователя на публикации с запрошенным ID. В completion передается Post в случае, если лайк поставлен успешно или был поставлен ранее; передается nil, если публикация с запрошенным ID не найдена.
     func likePost(with: Post.Identifier, queue: DispatchQueue, completion: @escaping (Post?) -> Void)
     
-    //TODO: описание
-    /// Удаляет лайк от текущего пользователя на публикации с запрошенным ID. Возвращает пост в случае, если лайк поставлен успешно или был поставлен ранее. Возвращает nil, если публикация с запрошенным ID не найдена.
+    /// Удаляет лайк от текущего пользователя на публикации с запрошенным ID. В completion передается Post в случае, если лайк удалён успешно или был удалён ранее; передается nil, если публикация с запрошенным ID не найдена.
     func unlikePost(with: Post.Identifier, queue: DispatchQueue, completion: @escaping (Post?) -> Void)
         
-    /// Создает новую публикацию.
+    /// Создает новую публикацию. В completion передается Post в случае, если он создан успешно; передается nil, если создать не удалось.
     func newPost(with: UIImage, description: String, queue: DispatchQueue, completion: @escaping (Post?) -> Void)
     
 }

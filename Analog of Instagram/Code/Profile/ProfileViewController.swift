@@ -100,7 +100,7 @@ final class ProfileViewController: UIViewController {
         button.contentEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        // Если постов нет, то это текущий юзер и отображать кнопку не нужно... не прокатило... С фида при переходе кнопка-то появляется (((
+        // Если постов нет, то это текущий юзер и отображать кнопку не нужно.
         guard allPosts != nil else {
             button.isHidden = true
             return button
@@ -161,6 +161,7 @@ final class ProfileViewController: UIViewController {
         addSubviews()
         setUpLayout()
         allPostsHandler()
+        logOutButtonSetup()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -324,6 +325,25 @@ final class ProfileViewController: UIViewController {
             scrollView.contentSize = CGSize(width: view.bounds.width, height: height)
         } else {
             scrollView.contentSize = CGSize(width: view.bounds.width, height: contentHeight)
+        }
+    }
+    
+    private func logOutButtonSetup() {
+        // Если постов нет, то это текущий юзер и отображать кнопку не нужно.
+        guard allPosts == nil else { return }
+        guard currentUser?.id == user.id else { return }
+        let logOutButton = UIBarButtonItem(title: "Log Out", style: .plain, target: self, action: #selector(logOut))
+        navigationItem.rightBarButtonItem = logOutButton
+    }
+    
+    @objc private func logOut() {
+        print("log out button pressed")
+        ActivityIndicatorViewController.startAnimating(in: self)
+        DataProviders.shared.signOut(queue: queue) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                let lognViewController = LoginViewController()
+                UIApplication.shared.windows.first { $0.isKeyWindow == true }?.rootViewController = lognViewController
+            }
         }
     }
     
