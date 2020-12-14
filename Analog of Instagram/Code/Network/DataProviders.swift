@@ -19,12 +19,12 @@ protocol DataProvider {
     func signIn(login: String, password: String, queue: DispatchQueue, completion: @escaping (Result<String, NetworkError>) -> Void)
     
     /// Деавторизует пользователя и инвалидирует токен.
-    func signOut(queue: DispatchQueue)
+    func signOut(queue: DispatchQueue, completion: @escaping (Result<HTTPURLResponse, NetworkError>) -> Void)
     
 }
 
 enum NetworkError: Error {
-    case badURLComponents(String)
+    case badRequest(String)
     case noData(String)
     case noToken(String)
     case incorrectJSONString(String)
@@ -39,6 +39,10 @@ final class DataProviders: DataProvider {
     private let host = "localhost"
     private let port = 8080
     
+    //TODO: Добавить токен, текущего юзера
+    private(set) var token = ""
+    var currentUser: User?
+    
     var usersDataProvider = UsersDataProvider()
     var postsDataProvider = PostsDataProvider()
     var photoProvider = PhotosDataProvider()
@@ -47,7 +51,7 @@ final class DataProviders: DataProvider {
     
     func signIn(login: String, password: String, queue: DispatchQueue, completion: @escaping (Result<String, NetworkError>) -> Void) {
         guard let result = getSignInRequest(login: login, password: password) else {
-            completion(.failure(.badURLComponents("\(#function): Bad URLComponents!")))
+            completion(.failure(.badRequest("\(#function): Bad URLComponents!")))
             return
         }
         switch result {
@@ -68,11 +72,12 @@ final class DataProviders: DataProvider {
                     return
                 }
                 guard let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: String],
-                      let token = json["token"] else {
+                      let fetchedToken = json["token"] else {
                     completion(.failure(.noToken("\(#function): Failed to fetch a token in data task!")))
                     return
                 }
-                completion(.success(token))
+                self.token = fetchedToken
+                completion(.success("Access is allowed"))
             }.resume()
         }
     }
@@ -88,7 +93,7 @@ final class DataProviders: DataProvider {
         }()
         guard let url = urlComponents.url else { return nil }
         print(url)
-        var request = URLRequest(url: url.absoluteURL)
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
@@ -98,7 +103,34 @@ final class DataProviders: DataProvider {
         return .success(request)
     }
     
-    func signOut(queue: DispatchQueue) {}
+    func signOut(queue: DispatchQueue, completion: @escaping (Result<HTTPURLResponse, NetworkError>) -> Void) {
+        guard let request = getSignOutRequest() else {
+            completion(.failure(.badRequest("\(#function): Bad URLComponents!")))
+            return
+        }
+        URLSession.shared.dataTask(with: request) { _, response, _ in
+            guard let httpResponse = response as? HTTPURLResponse else { return }
+            print(#function, "http status code: \(httpResponse.statusCode)")
+            completion(.success(httpResponse))
+        }.resume()
+        
+    }
+    
+    private func getSignOutRequest() -> URLRequest? {
+        let urlComponents: URLComponents = {
+            var urlComponents = URLComponents()
+            urlComponents.scheme = scheme
+            urlComponents.host = host
+            urlComponents.port = port
+            urlComponents.path = "/signout"
+            return urlComponents
+        }()
+        guard let url = urlComponents.url else { return nil }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue(token, forHTTPHeaderField: "token")
+        return request
+    }
     
 }
 

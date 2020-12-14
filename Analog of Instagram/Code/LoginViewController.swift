@@ -53,6 +53,8 @@ class LoginViewController: UIViewController {
         textField.keyboardType = .asciiCapable
         textField.returnKeyType = .send
         textField.autocapitalizationType = .none
+        textField.clearsOnBeginEditing = true
+        textField.isSecureTextEntry = true
         textField.delegate = self
         textField.tag = TextFieldTag.password.rawValue
         textField.addTarget(self, action: #selector(checkTextFieldsIsNotEmpty), for: .editingChanged)
@@ -124,16 +126,31 @@ class LoginViewController: UIViewController {
             ActivityIndicatorViewController.stopAnimating()
             switch result {
             case .failure(let error):
+                //TODO: здесь должен выскакивать алёрт
                 print(error)
             case .success(let token):
                 print(token)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    DataProviders.shared.signOut(queue: DispatchQueue.global()) { result in
+                        switch result {
+                        case .failure(let error):
+                            print(error)
+                        case .success(let response):
+                            guard response.statusCode == 200 else {
+                                print("ALERT: Sign out denied!")
+                                return
+                            }
+                            print("Sign out is done")
+                        }
+                    }
+                }
+            // ответ и записывался либо в константу, либо в DataProvider
+            // тут надо, чтобы загружался таб бар в корневое окно (хотя я бы сделал его просто дочерним контроллером. Ну, да бог с ними. Такое уж задание.
+//                let tabBarController = TabBarController()
+            //        add(content: tabBarController)
+//                UIApplication.shared.windows.first { $0.isKeyWindow == true }?.rootViewController = tabBarController
             }
         }
-        // далее возвращался ответ и записывался либо в константу, либо в DataProvider
-        // После чего загружался таб бар
-        // при этом надо включать активити индикатор
-//        let tabBarController = TabBarController()
-//        add(content: tabBarController)
     }
     
     private func add(content: UIViewController) {
@@ -151,7 +168,7 @@ class LoginViewController: UIViewController {
         content.didMove(toParent: self)
     }
     
-    /// Проверяем, все ли текстовые поля заполнены:
+    /// Проверяем, все ли текстовые поля заполнены. Если да, то активируем кнопку.
     @objc private func checkTextFieldsIsNotEmpty(_ textField: UITextField) {
         guard let login = loginTextField.text, !login.isEmpty,
               let password = passwordTextField.text, !password.isEmpty else {
