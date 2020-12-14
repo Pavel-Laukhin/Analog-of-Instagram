@@ -34,63 +34,99 @@ struct UsersDataProvider: UsersDataProviderProtocol {
     
     func currentUser(queue: DispatchQueue, completion: @escaping (User?) -> Void) {
         queue.async {
-            guard let request = getCurrentUserRequest() else {
-                completion(nil)
-                return
-            }
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print(#function, "http status code: \(httpResponse.statusCode)")
-                }
-                guard error == nil else {
-                    completion(nil)
-                    return
-                }
-                guard let data = data else {
-                    completion(nil)
-                    return
-                }
-                let decoder = JSONDecoder()
-                guard let user = try? decoder.decode(User.self, from: data) else { completion(nil)
-                    return
-                }
+            self.performRequest(for: .currentUser) { user in
                 completion(user)
-            }.resume()
+            }
         }
     }
     
-    func user(with: User.Identifier, queue: DispatchQueue, completion: @escaping (User?) -> Void) {
-        
+    func user(with id: User.Identifier, queue: DispatchQueue, completion: @escaping (User?) -> Void) {
+       queue.async {
+            self.performRequest(for: .user(userID: id)) { user in
+                completion(user)
+            }
+        }
     }
     
-    func usersFollowingUser(with: User.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void) {
-        
+    func usersFollowingUser(with id: User.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void) {
+        queue.async {
+            self.performRequest(for: .followingUsers(userID: id)) { users in
+                completion(users)
+            }
+        }
     }
     
-    func usersFollowedByUser(with: User.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void) {
-        
+    func usersFollowedByUser(with id: User.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void) {
+        queue.async {
+            self.performRequest(for: .followedUsers(userID: id)) { users in
+                completion(users)
+            }
+        }
     }
     
     func follow(_ userID: User.Identifier, queue: DispatchQueue, completion: @escaping (User?) -> Void) {
-        
+        queue.async {
+            self.performRequest(for: .follow(userID: userID)) { user in
+                completion(user)
+            }
+        }
     }
     
     func unfollow(_ userID: User.Identifier, queue: DispatchQueue, completion: @escaping (User?) -> Void) {
-        
+        queue.async {
+            self.performRequest(for: .unfollow(userID: userID)) { user in
+                completion(user)
+            }
+        }
     }
     
-    private func getCurrentUserRequest() -> URLRequest? {
-        let urlComponents: URLComponents = {
-            var urlComponents = URLComponents()
-            urlComponents.scheme = K.Server.scheme
-            urlComponents.host = K.Server.host
-            urlComponents.port = K.Server.port
-            urlComponents.path = K.Server.currentUserPath
-            return urlComponents
-        }()
-        guard let url = urlComponents.url else { return nil }
+    //MARK: - Generic
+    private func performRequest<T: Decodable>(for purpose: DataProviders.Purpose, completion: @escaping (T?) -> Void) {
+        guard let request = getRequest(for: purpose) else {
+            print(#function, "No request received!")
+            completion(nil)
+            return
+        }
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(#function, "http status:\(httpResponse.statusCode)")
+            }
+            guard error == nil else {
+                print(#function, error!.localizedDescription)
+                completion(nil)
+                return
+            }
+            guard let data = data else {
+                print(#function, "No data received!")
+                completion(nil)
+                return
+            }
+            let decoder = JSONDecoder()
+            if let value = try? decoder.decode(T.self, from: data) {
+                completion(value)
+            } else {
+                print(#function, "No value received from decoder!")
+                completion(nil)
+            }
+        }.resume()
+    }
+    
+    private func getRequest(for purpose: DataProviders.Purpose) -> URLRequest? {
+        guard let url = purpose.url else { return nil }
         var request = URLRequest(url: url)
-        request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
+        switch purpose {
+        case .currentUser, .user(_), .followingUsers(_), .followedUsers(_):
+            request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
+        case .follow(let userID), .unfollow(let userID):
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
+            let jsonDict = ["userID": userID]
+            if let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict
+                                                      , options: []) {
+            request.httpBody = jsonData
+            }
+        }
         return request
     }
     

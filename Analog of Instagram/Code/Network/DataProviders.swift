@@ -14,7 +14,6 @@ protocol DataProvider {
     var postsDataProvider: PostsDataProvider { get }
     var photoProvider: PhotosDataProvider { get }
     
-    //TODO: результат поправить, нужен юзер, а не стринг
     /// Авторизует пользователя и выдает токен.
     func signIn(login: String, password: String, completion: @escaping (NetworkError?) -> Void)
     
@@ -34,10 +33,6 @@ enum NetworkError: Error {
 final class DataProviders: DataProvider {
     
     static let shared = DataProviders()
-    
-    private let scheme = "http"
-    private let host = "localhost"
-    private let port = 8080
     
     private(set) var token = ""
     
@@ -94,7 +89,6 @@ final class DataProviders: DataProvider {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
         let dictionary = ["login": login, "password": password]
         guard let json = try? JSONSerialization.data(withJSONObject: dictionary, options: []) else { return .failure(.incorrectJSONString("Incorrect JSON string!")) }
         request.httpBody = json
@@ -129,6 +123,47 @@ final class DataProviders: DataProvider {
         request.httpMethod = "POST"
         request.addValue(token, forHTTPHeaderField: "token")
         return request
+    }
+    
+    enum Purpose {
+        case currentUser
+        case user(userID: User.Identifier)
+        case followingUsers(userID: User.Identifier)
+        case followedUsers(userID: User.Identifier)
+        case follow(userID: User.Identifier)
+        case unfollow(userID: User.Identifier)
+        
+        var url: URL? {
+            return createURL(for: self)
+        }
+        
+        private func createURL(for purpose: Purpose) -> URL? {
+            let path: String
+            switch purpose {
+            case .currentUser:
+                path = K.Server.currentUserPath
+            case .user(let userID):
+                path = "/users/\(userID)"
+            case .followingUsers(let userID):
+                path = "/users/\(userID)/followers"
+            case .followedUsers(let userID):
+                path = "/users/\(userID)/following"
+            case .follow(_):
+                path = "/users/follow"
+            case .unfollow(_):
+                path = "/users/unfollow"
+            }
+            let urlComponents: URLComponents = {
+                var urlComponents = URLComponents()
+                urlComponents.scheme = K.Server.scheme
+                urlComponents.host = K.Server.host
+                urlComponents.port = K.Server.port
+                urlComponents.path = path
+                return urlComponents
+            }()
+            guard let url = urlComponents.url else { return nil }
+            return url
+        }
     }
     
 }

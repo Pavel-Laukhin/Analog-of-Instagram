@@ -120,8 +120,6 @@ class LoginViewController: UIViewController {
         
         guard let login = loginTextField.text,
               let password = passwordTextField.text else { return }
-        //TODO:
-        // тут надо сделать, чтобы уходил запрос с введеными данными
         DataProviders.shared.signIn(login: login, password: password) { error in
             ActivityIndicatorViewController.stopAnimating()
             guard error == nil else {
