@@ -38,63 +38,43 @@ struct PostsDataProvider: PostsDataProviderProtocol {
     
     func feed(queue: DispatchQueue, completion: @escaping ([Post]?) -> Void) {
         queue.async {
-            guard let request = getFeedRequest() else {
-                completion(nil)
-                return
+            DataProviders.shared.performRequest(for: .feed) { feed in
+                completion(feed)
             }
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let httpResponse = response as? HTTPURLResponse {
-                    print(#function, "http status: \(httpResponse.statusCode)")
-                }
-                guard error == nil else {
-                    completion(nil)
-                    return
-                }
-                guard let data = data else {
-                    completion(nil)
-                    return
-                }
-                let decoder = JSONDecoder()
-                if let feed = try? decoder.decode([Post].self, from: data) {
-                    print(feed)
-                    completion(feed)
-                } else {
-                    print(#function, "Decode error")
-                }
-            }.resume()
         }
     }
     
-    func usersLikedPost(with: Post.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void) {
-        
+    func usersLikedPost(with id: Post.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void) {
+        queue.async {
+            DataProviders.shared.performRequest(for: .usersLiked(postID: id)) { users in
+                completion(users)
+            }
+        }
     }
     
-    func likePost(with: Post.Identifier, queue: DispatchQueue, completion: @escaping (Post?) -> Void) {
-        
+    func likePost(with id: Post.Identifier, queue: DispatchQueue, completion: @escaping (Post?) -> Void) {
+        queue.async {
+            DataProviders.shared.performRequest(for: .like(postID: id)) { post in
+                completion(post)
+            }
+        }
     }
     
 
-    func unlikePost(with: Post.Identifier, queue: DispatchQueue, completion: @escaping (Post?) -> Void) {
-        
+    func unlikePost(with id: Post.Identifier, queue: DispatchQueue, completion: @escaping (Post?) -> Void) {
+        queue.async {
+            DataProviders.shared.performRequest(for: .unlike(postID: id)) { post in
+                completion(post)
+            }
+        }
     }
     
-    func newPost(with: UIImage, description: String, queue: DispatchQueue, completion: @escaping (Post?) -> Void) {
-        
+    func newPost(with image: UIImage, description: String, queue: DispatchQueue, completion: @escaping (Post?) -> Void) {
+        queue.async {
+            DataProviders.shared.performRequest(for: .createPost(withImage: image, description: description)) { post in
+                completion(post)
+            }
+        }
     }
-    
-    private func getFeedRequest() -> URLRequest? {
-        let urlComponents: URLComponents = {
-            var urlComponents = URLComponents()
-            urlComponents.scheme = K.Server.scheme
-            urlComponents.host = K.Server.host
-            urlComponents.port = K.Server.port
-            urlComponents.path = K.Server.feedPath
-            return urlComponents
-        }()
-        guard let url = urlComponents.url else { return nil }
-        var request = URLRequest(url: url)
-        request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
-        return request
-    }
-    
+     
 }

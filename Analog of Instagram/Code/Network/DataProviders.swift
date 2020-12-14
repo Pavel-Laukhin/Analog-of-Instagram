@@ -132,6 +132,11 @@ final class DataProviders: DataProvider {
         case followedUsers(userID: User.Identifier)
         case follow(userID: User.Identifier)
         case unfollow(userID: User.Identifier)
+        case feed
+        case usersLiked(postID: Post.Identifier)
+        case like(postID: Post.Identifier)
+        case unlike(postID: Post.Identifier)
+        case createPost(withImage: UIImage, description: String)
         
         var url: URL? {
             return createURL(for: self)
@@ -152,6 +157,16 @@ final class DataProviders: DataProvider {
                 path = "/users/follow"
             case .unfollow(_):
                 path = "/users/unfollow"
+            case .feed:
+                path = K.Server.feedPath
+            case .usersLiked(let postID):
+                path = "/posts/\(postID)/likes"
+            case .like(_):
+                path = "/posts/like"
+            case .unlike(_):
+                path = "/posts/unlike"
+            case .createPost(_, _):
+                path = "/posts/create"
             }
             let urlComponents: URLComponents = {
                 var urlComponents = URLComponents()
@@ -164,6 +179,80 @@ final class DataProviders: DataProvider {
             guard let url = urlComponents.url else { return nil }
             return url
         }
+    }
+    
+    //MARK: - Generic
+    func performRequest<T: Decodable>(for purpose: DataProviders.Purpose, completion: @escaping (T?) -> Void) {
+        guard let request = getRequest(for: purpose) else {
+            print(#function, "No request received!")
+            completion(nil)
+            return
+        }
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse {
+                print(#function, "http status:\(httpResponse.statusCode)")
+            }
+            guard error == nil else {
+                print(#function, error!.localizedDescription)
+                completion(nil)
+                return
+            }
+            guard let data = data else {
+                print(#function, "No data received!")
+                completion(nil)
+                return
+            }
+            let decoder = JSONDecoder()
+            if let value = try? decoder.decode(T.self, from: data) {
+                completion(value)
+            } else {
+                print(#function, "No value received from decoder!")
+                completion(nil)
+            }
+        }.resume()
+    }
+    
+    private func getRequest(for purpose: DataProviders.Purpose) -> URLRequest? {
+        guard let url = purpose.url else { return nil }
+        var request = URLRequest(url: url)
+        switch purpose {
+        case .currentUser, .user(_), .followingUsers(_), .followedUsers(_), .feed, .usersLiked(_):
+            request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
+        case .createPost(let image, let description):
+            request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            guard let imageData = image.pngData() else { break }
+            let imageBase64String = imageData.base64EncodedString(options: .lineLength64Characters)
+            var jsonDict: [String: String] = [:]
+            jsonDict["image"] = imageBase64String
+            jsonDict["description"] = description
+            if let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict
+                                                          , options: []) {
+                request.httpBody = jsonData
+            }
+        case .follow(_), .unfollow(_), .like(_), .unlike(_):
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
+            
+            // Создаю пустой словарь и заполняю его в зависимости от цели. Этот словарь будет потом преобразован в JSON и передан в тело запроса.
+            var jsonDict: [String: String]?
+            switch purpose {
+            case .follow(let userID), .unfollow(let userID):
+                jsonDict = ["userID": userID]
+            case .like(let postID), .unlike(let postID):
+                jsonDict = ["postID": postID]
+            default:
+                jsonDict = nil
+            }
+            if let jsonDict = jsonDict,
+               let jsonData = try? JSONSerialization.data(withJSONObject: jsonDict
+                                                          , options: []) {
+                request.httpBody = jsonData
+            }
+        }
+        return request
     }
     
 }
