@@ -8,17 +8,14 @@
 
 import UIKit
 
-struct User {
+struct User: Codable {
     
     typealias Identifier = String
     
-    let id: String
+    let id: Identifier
     let username: String
     let fullName: String
-    
-    //TODO: заменить на String
-    let avatar: UIImage
-    
+    let avatar: String
     let currentUserFollowsThisUser: Bool
     let currentUserIsFollowedByThisUser: Bool
     let followsCount: Int

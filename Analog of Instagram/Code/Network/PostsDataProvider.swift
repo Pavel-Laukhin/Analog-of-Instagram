@@ -37,7 +37,32 @@ protocol PostsDataProviderProtocol {
 struct PostsDataProvider: PostsDataProviderProtocol {
     
     func feed(queue: DispatchQueue, completion: @escaping ([Post]?) -> Void) {
-        
+        queue.async {
+            guard let request = getFeedRequest() else {
+                completion(nil)
+                return
+            }
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let httpResponse = response as? HTTPURLResponse {
+                    print(#function, "http status: \(httpResponse.statusCode)")
+                }
+                guard error == nil else {
+                    completion(nil)
+                    return
+                }
+                guard let data = data else {
+                    completion(nil)
+                    return
+                }
+                let decoder = JSONDecoder()
+                if let feed = try? decoder.decode([Post].self, from: data) {
+                    print(feed)
+                    completion(feed)
+                } else {
+                    print(#function, "Decode error")
+                }
+            }.resume()
+        }
     }
     
     func usersLikedPost(with: Post.Identifier, queue: DispatchQueue, completion: @escaping ([User]?) -> Void) {
@@ -55,6 +80,21 @@ struct PostsDataProvider: PostsDataProviderProtocol {
     
     func newPost(with: UIImage, description: String, queue: DispatchQueue, completion: @escaping (Post?) -> Void) {
         
+    }
+    
+    private func getFeedRequest() -> URLRequest? {
+        let urlComponents: URLComponents = {
+            var urlComponents = URLComponents()
+            urlComponents.scheme = K.Server.scheme
+            urlComponents.host = K.Server.host
+            urlComponents.port = K.Server.port
+            urlComponents.path = K.Server.feedPath
+            return urlComponents
+        }()
+        guard let url = urlComponents.url else { return nil }
+        var request = URLRequest(url: url)
+        request.addValue(DataProviders.shared.token, forHTTPHeaderField: "token")
+        return request
     }
     
 }

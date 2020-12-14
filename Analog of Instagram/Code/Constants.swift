@@ -8,6 +8,21 @@
 
 import UIKit
 
-enum Constants {
-    static let textFieldWidth: CGFloat = 300
+/// Constants
+struct K {
+    
+    struct Size {
+        static let textFieldWidth: CGFloat = 300
+    }
+    
+    struct Server {
+        static let scheme = "http"
+        static let host = "localhost"
+        static let port = 8080
+        static let signInPath = "/signin"
+        static let signOutPath = "/signout"
+        static let currentUserPath = "/users/me"
+        static let feedPath = "/posts/feed"
+    }
+    
 }

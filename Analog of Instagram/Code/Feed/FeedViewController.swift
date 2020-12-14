@@ -46,6 +46,7 @@ final class FeedViewController: UIViewController {
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .medium)
+        indicator.color = .white
         indicator.center = view.center
         indicator.isHidden = true
         return indicator

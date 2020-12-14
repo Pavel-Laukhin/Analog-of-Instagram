@@ -98,7 +98,7 @@ class LoginViewController: UIViewController {
     
     private func setupSubviews() {
         
-        let width = (view.frame.width * 0.7) > Constants.textFieldWidth ? Constants.textFieldWidth : (view.frame.width * 0.7)
+        let width = (view.frame.width * 0.7) > K.Size.textFieldWidth ? K.Size.textFieldWidth : (view.frame.width * 0.7)
         
         NSLayoutConstraint.activate([
             loginTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
@@ -122,33 +122,16 @@ class LoginViewController: UIViewController {
               let password = passwordTextField.text else { return }
         //TODO:
         // тут надо сделать, чтобы уходил запрос с введеными данными
-        DataProviders.shared.signIn(login: login, password: password, queue: DispatchQueue.global()) { result in
+        DataProviders.shared.signIn(login: login, password: password) { error in
             ActivityIndicatorViewController.stopAnimating()
-            switch result {
-            case .failure(let error):
+            guard error == nil else {
                 //TODO: здесь должен выскакивать алёрт
-                print(error)
-            case .success(let token):
-                print(token)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    DataProviders.shared.signOut(queue: DispatchQueue.global()) { result in
-                        switch result {
-                        case .failure(let error):
-                            print(error)
-                        case .success(let response):
-                            guard response.statusCode == 200 else {
-                                print("ALERT: Sign out denied!")
-                                return
-                            }
-                            print("Sign out is done")
-                        }
-                    }
-                }
-            // ответ и записывался либо в константу, либо в DataProvider
-            // тут надо, чтобы загружался таб бар в корневое окно (хотя я бы сделал его просто дочерним контроллером. Ну, да бог с ними. Такое уж задание.
-//                let tabBarController = TabBarController()
-            //        add(content: tabBarController)
-//                UIApplication.shared.windows.first { $0.isKeyWindow == true }?.rootViewController = tabBarController
+                print(error as Any)
+                return
+            }
+            DispatchQueue.main.async {
+                let tabBarController = TabBarController()
+                UIApplication.shared.windows.first { $0.isKeyWindow == true }?.rootViewController = tabBarController
             }
         }
     }

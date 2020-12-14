@@ -13,7 +13,8 @@ final class TableViewCell: UITableViewCell {
     var user: User? {
         didSet {
             guard let user = user else { return }
-            imageView!.image = user.avatar
+            //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
+            imageView!.image = UIImage(data: try! Data(contentsOf: URL(string: user.avatar)!))
             textLabel!.text = user.fullName
             setUpLayout()
         }

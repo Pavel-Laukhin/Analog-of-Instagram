@@ -20,13 +20,6 @@ final class FeedCell: UICollectionViewCell {
     var callback: ((User.Identifier) -> Void)?
     var transitionState: TransitionState = .delegate
     
-    
-    private var formatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, yyyy 'at' HH:mm:ss aaa"
-        return formatter
-    }
-    
     var post: Post? {
         didSet {
             
@@ -134,10 +127,13 @@ final class FeedCell: UICollectionViewCell {
     private func updateUI() {
         
         guard let post = self.post else { return }
-        avatarImageView.image = post.authorAvatar
+        //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
+        avatarImageView.image = UIImage(data: try! Data(contentsOf: URL(string: post.authorAvatar)!))
         authorNameLabel.text = post.authorUsername
-        dateLabel.text = self.formatter.string(from: post.createdTime)
-        postImageView.image = post.image
+        dateLabel.text = post.createdTime
+        
+        //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
+        postImageView.image = UIImage(data: try! Data(contentsOf: URL(string: post.image)!))
         numberOfLikesLabel.text = "Likes: \(post.likedByCount)"
         descriptionLabel.text = post.description
         addSubviews()
