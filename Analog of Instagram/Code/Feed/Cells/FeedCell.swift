@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 enum TransitionState {
     case delegate, callback
@@ -127,13 +128,12 @@ final class FeedCell: UICollectionViewCell {
     private func updateUI() {
         
         guard let post = self.post else { return }
-        //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
-        avatarImageView.image = UIImage(data: try! Data(contentsOf: URL(string: post.authorAvatar)!))
+        avatarImageView.kf.indicatorType = .activity
+        avatarImageView.kf.setImage(with: URL(string: post.authorAvatar))
         authorNameLabel.text = post.authorUsername
         dateLabel.text = post.createdTime
-        
-        //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
-        postImageView.image = UIImage(data: try! Data(contentsOf: URL(string: post.image)!))
+        postImageView.kf.indicatorType = .activity
+        postImageView.kf.setImage(with: URL(string: post.image))
         numberOfLikesLabel.text = "Likes: \(post.likedByCount)"
         descriptionLabel.text = post.description
         addSubviews()

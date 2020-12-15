@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -200,9 +201,8 @@ final class ProfileViewController: UIViewController {
     
     private func updateUI() {
         navigationItem.title = user.username
-        
-        //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
-        avatarImageView.image = UIImage(data: try! Data(contentsOf: URL(string: user.avatar)!))
+        avatarImageView.kf.indicatorType = .activity
+        avatarImageView.kf.setImage(with: URL(string: user.avatar))
         userFullNameLabel.text = user.fullName
         followersButton.setAttributedTitle(NSAttributedString(string: "Followers: \(user.followedByCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)
         followingButton.setAttributedTitle(NSAttributedString(string: "Following: \(user.followsCount)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14, weight: .semibold)]), for: .normal)

@@ -114,6 +114,7 @@ final class DataProviders: DataProvider {
         return request
     }
     
+    //MARK: - Generic
     enum Purpose {
         case currentUser
         case user(userID: User.Identifier)
@@ -170,7 +171,6 @@ final class DataProviders: DataProvider {
         }
     }
     
-    //MARK: - Generic
     func performRequest<T: Decodable>(for purpose: DataProviders.Purpose, completion: @escaping (T?) -> Void) {
         guard let request = getRequest(for: purpose) else {
             print(#function, "No request received!")

@@ -7,14 +7,15 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class TableViewCell: UITableViewCell {
     
     var user: User? {
         didSet {
             guard let user = user else { return }
-            //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
-            imageView!.image = UIImage(data: try! Data(contentsOf: URL(string: user.avatar)!))
+            imageView!.kf.indicatorType = .activity
+            imageView!.kf.setImage(with: URL(string: user.avatar))
             textLabel!.text = user.fullName
             setUpLayout()
         }

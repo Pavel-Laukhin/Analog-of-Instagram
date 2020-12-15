@@ -13,8 +13,8 @@ final class ProfileFeedCell: UICollectionViewCell {
     var post: Post? {
         didSet {
             guard let post = post else { return }
-            //TODO: Kingfisher - с помощью него загружать аватар по ссылке:
-            postImageView.image = UIImage(data: try! Data(contentsOf: URL(string: post.image)!))
+            postImageView.kf.indicatorType = .activity
+            postImageView.kf.setImage(with: URL(string: post.image))
             addSubviews()
             setupLayout()
         }

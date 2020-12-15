@@ -53,12 +53,8 @@ extension Post: Decodable {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
         let date = formatter.date(from: self.rawTime)
-        print("date format BEFORE: \(String(describing: formatter.dateFormat))")
-        print(formatter.string(from: date ?? Date()))
         let formatter2 = DateFormatter()
         formatter2.dateFormat = "MMM d, yyyy 'at' HH:mm:ss aaa"
-        print("date format AFTER: \(String(describing: formatter2.dateFormat))")
-        print(formatter2.string(from: date ?? Date()))
         self.createdTime = formatter2.string(from: date ?? Date())
 
     }
