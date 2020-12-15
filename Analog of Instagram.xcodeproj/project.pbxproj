@@ -21,6 +21,7 @@
 		E92D4830251E256700175D0E /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E92D482F251E256700175D0E /* ShareViewController.swift */; };
 		E93B77B3258225C300108A67 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93B77B2258225C300108A67 /* Post.swift */; };
 		E941B69024F84CCA008701E3 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = E941B68F24F84CCA008701E3 /* Alert.swift */; };
+		E947940D258949530044C2D9 /* UIImage Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E947940C258949530044C2D9 /* UIImage Extension.swift */; };
 		E955B7062584F20E002775D0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955B7052584F20E002775D0 /* Constants.swift */; };
 		E955B708258528C9002775D0 /* UsersDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955B707258528C9002775D0 /* UsersDataProvider.swift */; };
 		E955B70A25852906002775D0 /* PostsDataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E955B70925852906002775D0 /* PostsDataProvider.swift */; };
@@ -76,6 +77,7 @@
 		E92D482F251E256700175D0E /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		E93B77B2258225C300108A67 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		E941B68F24F84CCA008701E3 /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		E947940C258949530044C2D9 /* UIImage Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage Extension.swift"; sourceTree = "<group>"; };
 		E955B7052584F20E002775D0 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		E955B707258528C9002775D0 /* UsersDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersDataProvider.swift; sourceTree = "<group>"; };
 		E955B70925852906002775D0 /* PostsDataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostsDataProvider.swift; sourceTree = "<group>"; };
@@ -117,7 +119,6 @@
 				A8D4CB3D6FBC830387DF41F4 /* Pods-Analog of Instagram.debug.xcconfig */,
 				72476277040AC67EA4DA79A4 /* Pods-Analog of Instagram.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -158,6 +159,7 @@
 				E955B7052584F20E002775D0 /* Constants.swift */,
 				E97820FC2527AF8600C7BD1B /* ActivityIndicatorViewController.swift */,
 				E9799F722581929600FEB5F6 /* UIView Extension.swift */,
+				E947940C258949530044C2D9 /* UIImage Extension.swift */,
 				E9D314522580BA1B00DB82D5 /* Network */,
 				E9D314532580BA3E00DB82D5 /* Model */,
 				E92A495F2515B57400541921 /* TabBar */,
@@ -450,6 +452,7 @@
 				74B79258202B3254006BCB41 /* AppDelegate.swift in Sources */,
 				E955B70C25852935002775D0 /* PhotosDataProvider.swift in Sources */,
 				E941B69024F84CCA008701E3 /* Alert.swift in Sources */,
+				E947940D258949530044C2D9 /* UIImage Extension.swift in Sources */,
 				E93B77B3258225C300108A67 /* Post.swift in Sources */,
 				E9A23D7F24B2E6400017BB7E /* TableViewController.swift in Sources */,
 				E97820FD2527AF8600C7BD1B /* ActivityIndicatorViewController.swift in Sources */,

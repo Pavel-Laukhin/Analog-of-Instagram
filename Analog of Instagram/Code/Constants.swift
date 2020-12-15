@@ -13,6 +13,7 @@ struct K {
     
     struct Size {
         static let textFieldWidth: CGFloat = 300
+        static let ofThumbnailPhotos: CGSize = CGSize(width: 50, height: 50)
     }
     
     struct Server {

@@ -220,8 +220,8 @@ final class DataProviders: DataProvider {
             case .like(let postID), .unlike(let postID):
                 jsonDict = ["postID": postID]
             case .createPost(let image, let description):
-                guard let imageData = image.pngData() else { break }
-                let imageBase64String = imageData.base64EncodedString(options: .lineLength64Characters)
+                guard let imageData = image.jpegData(compressionQuality: 1) else { break }
+                let imageBase64String = imageData.base64EncodedString()
                 jsonDict = [:]
                 if jsonDict != nil {
                     jsonDict!["image"] = imageBase64String
