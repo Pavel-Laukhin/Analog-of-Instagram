@@ -155,11 +155,6 @@
 			children = (
 				74B79257202B3254006BCB41 /* AppDelegate.swift */,
 				E9799F702581911900FEB5F6 /* LoginViewController.swift */,
-				E941B68F24F84CCA008701E3 /* Alert.swift */,
-				E955B7052584F20E002775D0 /* Constants.swift */,
-				E97820FC2527AF8600C7BD1B /* ActivityIndicatorViewController.swift */,
-				E9799F722581929600FEB5F6 /* UIView Extension.swift */,
-				E947940C258949530044C2D9 /* UIImage Extension.swift */,
 				E9D314522580BA1B00DB82D5 /* Network */,
 				E9D314532580BA3E00DB82D5 /* Model */,
 				E92A495F2515B57400541921 /* TabBar */,
@@ -167,6 +162,7 @@
 				E91E5D3C2518ABA900A15439 /* AddNew */,
 				E9BAEDBE24B1DA3A00B66E57 /* Profile */,
 				E9A23D7D24B2E6150017BB7E /* Table */,
+				E90913C8258B8F0D0026D203 /* Helpers */,
 			);
 			path = Code;
 			sourceTree = "<group>";
@@ -193,6 +189,26 @@
 				68374B87ABAE4F64531C5C95 /* Pods_Analog_of_Instagram.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E90913C8258B8F0D0026D203 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				E941B68F24F84CCA008701E3 /* Alert.swift */,
+				E955B7052584F20E002775D0 /* Constants.swift */,
+				E97820FC2527AF8600C7BD1B /* ActivityIndicatorViewController.swift */,
+				E90913C9258B8F140026D203 /* Extentions */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		E90913C9258B8F140026D203 /* Extentions */ = {
+			isa = PBXGroup;
+			children = (
+				E9799F722581929600FEB5F6 /* UIView Extension.swift */,
+				E947940C258949530044C2D9 /* UIImage Extension.swift */,
+			);
+			path = Extentions;
 			sourceTree = "<group>";
 		};
 		E91E5D3C2518ABA900A15439 /* AddNew */ = {
