@@ -47,9 +47,15 @@ final class DataProviders: DataProvider {
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let httpResponse = response as? HTTPURLResponse {
                     print(#function, "http status code: \(httpResponse.statusCode)")
+                    if httpResponse.statusCode >= 400 {
+                        Alert.show(withStatusCode: httpResponse.statusCode)
+                        completion(.dataTaskError())
+                        return
+                    }
                 }
                 guard error == nil else {
-                    completion(.dataTaskError("\(#function): Data task error: \(error!.localizedDescription)"))
+                    print("\(#function): Data task error: \(error!.localizedDescription)")
+                    completion(.dataTaskError(error!.localizedDescription))
                     return
                 }
                 guard let data = data else {
@@ -77,7 +83,6 @@ final class DataProviders: DataProvider {
             return urlComponents
         }()
         guard let url = urlComponents.url else { return nil }
-        print(url)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -93,6 +98,10 @@ final class DataProviders: DataProvider {
             URLSession.shared.dataTask(with: request) { _, response, _ in
                 guard let httpResponse = response as? HTTPURLResponse else { return }
                 print(#function, "http status code: \(httpResponse.statusCode)")
+                if httpResponse.statusCode >= 400 {
+                    Alert.show(withStatusCode: httpResponse.statusCode)
+                    return
+                }
                 completion()
             }.resume()
         }
@@ -180,6 +189,11 @@ final class DataProviders: DataProvider {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let httpResponse = response as? HTTPURLResponse {
                 print(#function, "http status:\(httpResponse.statusCode)")
+                if httpResponse.statusCode >= 400 {
+                    Alert.show(withStatusCode: httpResponse.statusCode)
+                    completion(nil)
+                    return
+                }
             }
             guard error == nil else {
                 print(#function, error!.localizedDescription)

@@ -115,18 +115,12 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func logInButtonPressed() {
-        print("log in button pressed")
         ActivityIndicatorViewController.startAnimating(in: self)
-        
         guard let login = loginTextField.text,
               let password = passwordTextField.text else { return }
         DataProviders.shared.signIn(login: login, password: password) { error in
             ActivityIndicatorViewController.stopAnimating()
-            guard error == nil else {
-                //TODO: здесь должен выскакивать алёрт
-                print(error as Any)
-                return
-            }
+            guard error == nil else { return }
             DispatchQueue.main.async {
                 let tabBarController = TabBarController()
                 UIApplication.shared.windows.first { $0.isKeyWindow == true }?.rootViewController = tabBarController

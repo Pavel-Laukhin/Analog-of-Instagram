@@ -62,7 +62,6 @@ final class FeedViewController: UIViewController {
         // Задаем автоматический размер айтемов у коллекшн вью:
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-            print("estimatedItemSize is automaticSize")
         }
         
         // Загружаем посты:
@@ -78,8 +77,8 @@ final class FeedViewController: UIViewController {
         DataProviders.shared.usersDataProvider.currentUser(queue: queue) { [weak self] user in
             guard let self = self else { return }
             guard let user = user else {
-                Alert.showBasic(vc: self)
-                print("Current user returned as nil")
+                Alert.show(withMessage: "Please, try again later.")
+                print(type(of: self), #function, "Current user returned as nil")
                 self.dispatchGroup.leave()
                 return
             }
@@ -132,14 +131,14 @@ extension FeedViewController: TransitionProtocol {
                 // Показываем алерт о неизвестной ошибке:
                 DispatchQueue.main.async {
                     self.turnActivityOff()
-                    Alert.showBasic(vc: self)
+                    Alert.show(withMessage: "Please, try again later.")
                 }
             } else if arrayOfUsers?.count == 0 {
                 
                 // Показываем алерт о том, что лист пустой:
                 DispatchQueue.main.async {
                     self.turnActivityOff()
-                    Alert.showEmptyArray(vc: self)
+                    Alert.show(withTitle: "List is empty!")
                 }
             } else {
                 
@@ -168,7 +167,7 @@ extension FeedViewController: TransitionProtocol {
                     // Показываем алерт о неизвестной ошибке:
                     DispatchQueue.main.async {
                         self.turnActivityOff()
-                        Alert.showBasic(vc: self)
+                        Alert.show(withMessage: "Please, try again later.")
                     }
                     return
                 }

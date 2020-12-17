@@ -336,17 +336,6 @@ final class ProfileViewController: UIViewController {
         navigationItem.rightBarButtonItem = logOutButton
     }
     
-    @objc private func logOut() {
-        print("log out button pressed")
-        ActivityIndicatorViewController.startAnimating(in: self)
-        DataProviders.shared.signOut(queue: queue) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                let lognViewController = LoginViewController()
-                UIApplication.shared.windows.first { $0.isKeyWindow == true }?.rootViewController = lognViewController
-            }
-        }
-    }
-    
     // MARK: - Actions
     
     /// Находит индекс вкладки у таб бара, которая сейчас отображается. Определяет корневую вью у данной вкладки. Запускает на весь экран у корневой вью метод startAnimating типа ActivityIndicatorViewController. Затем запускает метод, отображающий списко юзеров.
@@ -368,7 +357,7 @@ final class ProfileViewController: UIViewController {
             } else {
                 DispatchQueue.main.async {
                     rootVC.dismiss(animated: false, completion: nil)
-                    Alert.showBasic(vc: self)
+                    Alert.show(withMessage: "Please, try again later.")
                 }
             }
         }
@@ -393,7 +382,7 @@ final class ProfileViewController: UIViewController {
             } else {
                 DispatchQueue.main.async {
                     rootVC.dismiss(animated: false, completion: nil)
-                    Alert.showBasic(vc: self)
+                    Alert.show(withMessage: "Please, try again later.")
                 }
             }
         }
@@ -421,7 +410,7 @@ final class ProfileViewController: UIViewController {
     private func toFollow() {
         DataProviders.shared.usersDataProvider.follow(user.id, queue: queue) { user in
             guard let user = user else {
-                print("user: \(String(describing: self.user.username)): nil in DataProvider")
+                print(type(of: self), #function, "user: \(String(describing: self.user.username)): nil in DataProvider")
                 return
             }
             
@@ -433,7 +422,7 @@ final class ProfileViewController: UIViewController {
                 }
                 
                 // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
-                print("user: \(String(describing: self.user.username)): Followed in DataProvider")
+                print(type(of: self), #function, "user: \(String(describing: self.user.username)): Followed in DataProvider")
                 self.isInTheProcessOfChangingSubscription = false
                 
                 // Включаем необходимость обновить количество подписок в контроллере ProfileViewController:
@@ -447,7 +436,7 @@ final class ProfileViewController: UIViewController {
                 }
                 
             } else {
-                print("user: \(String(describing: self.user.username)): Followed in DataProvider BUT NEED TO CHANGE")
+                print(type(of: self), #function, "user: \(String(describing: self.user.username)): Followed in DataProvider BUT NEED TO CHANGE")
                 self.toUnfollow()
             }
         }
@@ -456,7 +445,7 @@ final class ProfileViewController: UIViewController {
     private func toUnfollow() {
         DataProviders.shared.usersDataProvider.unfollow(user.id, queue: queue) { user in
             guard let user = user else {
-                print("user: \(String(describing: self.user.username)): nil in DataProvider")
+                print(type(of: self), #function, "user: \(String(describing: self.user.username)): nil in DataProvider")
                 return
             }
             
@@ -468,7 +457,7 @@ final class ProfileViewController: UIViewController {
                 }
                 
                 // Сообщаем, что процесс подписки/отписки закончен и меняем соответствующий статус у переменной:
-                print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider")
+                print(type(of: self), #function, "user: \(String(describing: self.user.username)): Unfollowed in DataProvider")
                 self.isInTheProcessOfChangingSubscription = false
                 
                 // Включаем необходимость обновить количество подписок в контроллере ProfileViewController:
@@ -482,8 +471,18 @@ final class ProfileViewController: UIViewController {
                 }
                 
             } else {
-                print("user: \(String(describing: self.user.username)): Unfollowed in DataProvider BUT NEED TO CHANGE")
+                print(type(of: self), #function, "user: \(String(describing: self.user.username)): Unfollowed in DataProvider BUT NEED TO CHANGE")
                 self.toFollow()
+            }
+        }
+    }
+    
+    @objc private func logOut() {
+        ActivityIndicatorViewController.startAnimating(in: self)
+        DataProviders.shared.signOut(queue: queue) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                let lognViewController = LoginViewController()
+                UIApplication.shared.windows.first { $0.isKeyWindow == true }?.rootViewController = lognViewController
             }
         }
     }

@@ -9,9 +9,9 @@
 import Foundation
 
 enum NetworkError: Error {
-    case badRequest(String)
-    case noData(String)
-    case noToken(String)
-    case incorrectJSONString(String)
-    case dataTaskError(String)
+    case badRequest(String? = nil)
+    case dataTaskError(String? = nil)
+    case noData(String? = nil)
+    case noToken(String? = nil)
+    case incorrectJSONString(String? = nil)
 }

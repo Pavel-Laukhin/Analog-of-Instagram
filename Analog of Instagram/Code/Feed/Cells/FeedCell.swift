@@ -232,7 +232,7 @@ final class FeedCell: UICollectionViewCell {
                 toMarkAsLiked()
             }
         default:
-            print("isLikeButtonPressed: ERROR: isCurrentUserLikesThisPost = nil")
+            print(type(of: self), #function, "ERROR: isCurrentUserLikesThisPost = nil")
         }
     }
     
@@ -241,7 +241,7 @@ final class FeedCell: UICollectionViewCell {
             guard let self = self else { return }
             guard let post = post else {
                 DispatchQueue.main.async {
-                    Alert.showBasic(vc: self.delegate as! UIViewController)
+                    Alert.show(withMessage: "Please, try again later.")
                 }
                 return
             }
@@ -254,10 +254,10 @@ final class FeedCell: UICollectionViewCell {
                 }
                 
                 // Сообщаем, что процесс лайка/дизлайка закончен и меняем соответствующий статус у переменной:
-                print("Unliked in DataProvider")
+                print(type(of: self), #function, "Unliked in DataProvider")
                 self.isInTheProcessOfChangingLikeState = false
             } else {
-                print("Unliked in DataProvider BUT NEED TO CHANGE")
+                print(type(of: self), #function, "Unliked in DataProvider BUT NEED TO CHANGE")
                 self.toMarkAsLiked()
             }
         }
@@ -268,7 +268,7 @@ final class FeedCell: UICollectionViewCell {
             guard let self = self else { return }
             guard let post = post else {
                 DispatchQueue.main.async {
-                    Alert.showBasic(vc: self.delegate as! UIViewController)
+                    Alert.show(withMessage: "Please, try again later.")
                 }
                 return
             }
@@ -281,10 +281,10 @@ final class FeedCell: UICollectionViewCell {
                 }
                 
                 // Сообщаем, что процесс лайка/дизлайка закончен и меняем соответствующий статус у переменной:
-                print("Liked in DataProvider")
+                print(type(of: self), #function, "Liked in DataProvider")
                 self.isInTheProcessOfChangingLikeState = false
             } else {
-                print("Liked in DataProvider BUT NEED TO CHANGE")
+                print(type(of: self), #function, "Liked in DataProvider BUT NEED TO CHANGE")
                 self.toMarkAsUnliked()
             }
         }

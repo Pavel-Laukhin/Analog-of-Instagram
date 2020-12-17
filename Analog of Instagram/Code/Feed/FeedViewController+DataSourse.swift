@@ -37,7 +37,7 @@ extension FeedViewController: UICollectionViewDataSource {
                 } else {
                     DispatchQueue.main.async {
                         self.turnActivityOff()
-                        Alert.showBasic(vc: self)
+                        Alert.show(withMessage: "Please, try again later.")
                     }
                 }
             }

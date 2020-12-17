@@ -35,7 +35,7 @@ class ActivityIndicatorViewController: UIViewController {
     class func stopAnimating() {
         DispatchQueue.main.async {
             if let rootVC = UIApplication.shared.windows.filter({$0.isKeyWindow}).first?.rootViewController {
-                rootVC.dismiss(animated: true, completion: nil)
+                rootVC.dismiss(animated: false, completion: nil)
             }
         }
     }
