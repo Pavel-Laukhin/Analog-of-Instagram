@@ -10,9 +10,9 @@ import UIKit
 
 protocol DataProvider {
     
-    var usersDataProvider: UsersDataProvider { get }
-    var postsDataProvider: PostsDataProvider { get }
-    var photoProvider: PhotosDataProvider { get }
+    var usersDataProvider: UsersDataProviderProtocol { get }
+    var postsDataProvider: PostsDataProviderProtocol { get }
+    var photoProvider: PhotosDataProviderProtocol { get }
     
     /// Авторизует пользователя и выдает токен.
     func signIn(login: String, password: String, completion: @escaping (NetworkError?) -> Void)
@@ -28,9 +28,9 @@ final class DataProviders: DataProvider {
     
     private(set) var token = ""
     
-    var usersDataProvider = UsersDataProvider()
-    var postsDataProvider = PostsDataProvider()
-    var photoProvider = PhotosDataProvider()
+    var usersDataProvider: UsersDataProviderProtocol = UsersDataProvider()
+    var postsDataProvider: PostsDataProviderProtocol = PostsDataProvider()
+    var photoProvider: PhotosDataProviderProtocol = PhotosDataProvider()
     
     private init() {}
     
