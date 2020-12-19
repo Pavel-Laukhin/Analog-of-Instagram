@@ -128,21 +128,6 @@ class LoginViewController: UIViewController {
         }
     }
     
-    private func add(content: UIViewController) {
-        addChild(content)
-        view.addSubview(content.view)
-        content.view.toAutoLayout()
-        
-        NSLayoutConstraint.activate([
-            content.view.topAnchor.constraint(equalTo: view.topAnchor),
-            content.view.leftAnchor.constraint(equalTo: view.leftAnchor),
-            content.view.rightAnchor.constraint(equalTo: view.rightAnchor),
-            content.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        ActivityIndicatorViewController.stopAnimating()
-        content.didMove(toParent: self)
-    }
-    
     /// Проверяем, все ли текстовые поля заполнены. Если да, то активируем кнопку.
     @objc private func checkTextFieldsIsNotEmpty(_ textField: UITextField) {
         guard let login = loginTextField.text, !login.isEmpty,
