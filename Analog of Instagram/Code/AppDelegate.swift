@@ -35,6 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         func applicationDidEnterBackground(_ application: UIApplication) {
             print(#function)
+            // При входе в фоновый режим отсчет времени показывает 30 секунд. При этом комплишен хендлер срабатывает за 5 секунд до конца.
         }
         
         func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
