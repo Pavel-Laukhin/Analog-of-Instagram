@@ -20,4 +20,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         return true
     }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+            print(#function)
+        }
+        
+        func applicationDidBecomeActive(_ application: UIApplication) {
+            print(#function)
+        }
+        
+        func applicationWillResignActive(_ application: UIApplication) {
+            print(#function)
+        }
+        
+        func applicationDidEnterBackground(_ application: UIApplication) {
+            print(#function)
+        }
+        
+        func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+            print(#function)
+            return true
+        }
+        
+        func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+            print(#function)
+            return true
+        }
+    
 }

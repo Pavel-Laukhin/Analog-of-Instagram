@@ -10,6 +10,9 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
+    var backgroundTask: UIBackgroundTaskIdentifier = .invalid
+    var timer: Timer?
+    
     private enum TextFieldTag: Int {
         case login = 0
         case password
@@ -79,12 +82,23 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    // For background task
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.backgroundColor = .systemBackground
         addSubviews()
         setupSubviews()
+        
+        // Background task
+//        reinstateBackgroundTask()
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(reinstateBackgroundTask),
+                         name: UIApplication.didBecomeActiveNotification, object: nil)
     }
     
     private func addSubviews() {
@@ -154,6 +168,29 @@ extension LoginViewController: UITextFieldDelegate {
         }
         
         return true
+    }
+    
+    // MARK: - Background task
+    func startBackgroundTask() {
+        backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "LoginViewController background task"){ [weak self] in
+            self?.endBackgroundTask()
+        }
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            print("\(UIApplication.shared.backgroundTimeRemaining) sec left")
+        }
+    }
+    
+    func endBackgroundTask() {
+        print("LoginViewController background task has expired!")
+        UIApplication.shared.endBackgroundTask(backgroundTask)
+        timer?.invalidate()
+        backgroundTask = .invalid
+    }
+    
+    @objc func reinstateBackgroundTask() {
+        if backgroundTask == .invalid {
+            startBackgroundTask()
+        }
     }
     
 }
