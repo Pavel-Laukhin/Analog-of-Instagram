@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class LoginViewController: UIViewController {
     
@@ -92,7 +93,6 @@ class LoginViewController: UIViewController {
          passwordTextField,
          logInButton].forEach {
             view.addSubview($0)
-            $0.toAutoLayout()
          }
     }
     
@@ -100,18 +100,22 @@ class LoginViewController: UIViewController {
         
         let width = (view.frame.width * 0.7) > K.Size.textFieldWidth ? K.Size.textFieldWidth : (view.frame.width * 0.7)
         
-        NSLayoutConstraint.activate([
-            loginTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            loginTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            loginTextField.widthAnchor.constraint(equalToConstant: width),
-            
-            passwordTextField.topAnchor.constraint(equalTo: loginTextField.bottomAnchor, constant: 32),
-            passwordTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            passwordTextField.widthAnchor.constraint(equalToConstant: width),
-            
-            logInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 32),
-            logInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
-        ])
+        loginTextField.snp.makeConstraints { make in
+            make.top.equalTo(view.snp.topMargin).offset(32)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(width)
+        }
+        
+        passwordTextField.snp.makeConstraints { make in
+            make.top.equalTo(loginTextField.snp.bottom).offset(32)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(width)
+        }
+        
+        logInButton.snp.makeConstraints { make in
+            make.top.equalTo(passwordTextField.snp.bottom).offset(32)
+            make.centerX.equalToSuperview()
+        }
     }
     
     @objc private func logInButtonPressed() {

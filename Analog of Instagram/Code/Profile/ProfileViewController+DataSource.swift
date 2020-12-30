@@ -9,6 +9,7 @@
 import UIKit
 
 extension ProfileViewController: UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let postsOfUser = self.postsOfUser else { return 1 }
         return postsOfUser.count
@@ -21,6 +22,5 @@ extension ProfileViewController: UICollectionViewDataSource {
         cell.post = postsOfUser[indexPath.item]
         return cell
     }
-    
     
 }
