@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -41,6 +41,8 @@
 		E9A23D7C24B208E20017BB7E /* ProfileViewController+Delegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D7B24B208E20017BB7E /* ProfileViewController+Delegate.swift */; };
 		E9A23D7F24B2E6400017BB7E /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D7E24B2E6400017BB7E /* TableViewController.swift */; };
 		E9A23D8124B2E9580017BB7E /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A23D8024B2E9580017BB7E /* TableViewCell.swift */; };
+		E9B67A17259C68E7006EA630 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = E9B67A16259C68E7006EA630 /* SwiftPackageProductDependency */; };
+		E9B67A19259C6A14006EA630 /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B67A18259C6A14006EA630 /* CustomView.swift */; };
 		E9D314552580BA5B00DB82D5 /* DataProviders.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9D314542580BA5B00DB82D5 /* DataProviders.swift */; };
 		E9DE388C2587EA2700930FA0 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DE388B2587EA2700930FA0 /* NetworkError.swift */; };
 /* End PBXBuildFile section */
@@ -97,6 +99,7 @@
 		E9A23D7B24B208E20017BB7E /* ProfileViewController+Delegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileViewController+Delegate.swift"; sourceTree = "<group>"; };
 		E9A23D7E24B2E6400017BB7E /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		E9A23D8024B2E9580017BB7E /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		E9B67A18259C6A14006EA630 /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
 		E9D314542580BA5B00DB82D5 /* DataProviders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataProviders.swift; sourceTree = "<group>"; };
 		E9DE388B2587EA2700930FA0 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -107,6 +110,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0006D71A3F1B895E2F1E14D0 /* Pods_Analog_of_Instagram.framework in Frameworks */,
+				E9B67A17259C68E7006EA630 /* BuildFile in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,6 +159,7 @@
 			children = (
 				74B79257202B3254006BCB41 /* AppDelegate.swift */,
 				E9799F702581911900FEB5F6 /* LoginViewController.swift */,
+				E9B67A18259C6A14006EA630 /* CustomView.swift */,
 				E9D314522580BA1B00DB82D5 /* Network */,
 				E9D314532580BA3E00DB82D5 /* Model */,
 				E92A495F2515B57400541921 /* TabBar */,
@@ -346,6 +351,9 @@
 			dependencies = (
 			);
 			name = "Analog of Instagram";
+			packageProductDependencies = (
+				E9B67A16259C68E7006EA630 /* SwiftPackageProductDependency */,
+			);
 			productName = Course2Week3FinalTask;
 			productReference = 74B79254202B3254006BCB41 /* Analog of Instagram.app */;
 			productType = "com.apple.product-type.application";
@@ -376,6 +384,9 @@
 				Base,
 			);
 			mainGroup = 74B7924B202B3254006BCB41;
+			packageReferences = (
+				E9B67A15259C68E7006EA630 /* RemoteSwiftPackageReference */,
+			);
 			productRefGroup = 74B79255202B3254006BCB41 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -427,10 +438,12 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Analog of Instagram/Pods-Analog of Instagram-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
+				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -454,6 +467,7 @@
 				E9799F7525819AD100FEB5F6 /* User.swift in Sources */,
 				E91E5D6C251A824200A15439 /* FilterViewCell.swift in Sources */,
 				E9DE388C2587EA2700930FA0 /* NetworkError.swift in Sources */,
+				E9B67A19259C6A14006EA630 /* CustomView.swift in Sources */,
 				E92D4830251E256700175D0E /* ShareViewController.swift in Sources */,
 				E9799F732581929600FEB5F6 /* UIView Extension.swift in Sources */,
 				E92A49612515B5AC00541921 /* TabBarController.swift in Sources */,
@@ -592,7 +606,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -614,7 +629,10 @@
 				GCC_PREFIX_HEADER = "${PRODUCT_NAME}";
 				INFOPLIST_FILE = "$(SRCROOT)/Analog of Instagram/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pavel-laukhin.AnalogOfInstagram";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -640,7 +658,10 @@
 				GCC_PREFIX_HEADER = "${PRODUCT_NAME}";
 				INFOPLIST_FILE = "$(SRCROOT)/Analog of Instagram/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pavel-laukhin.AnalogOfInstagram";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -671,6 +692,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E9B67A15259C68E7006EA630 /* RemoteSwiftPackageReference */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TrueMax/iOSIntPackage/";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E9B67A16259C68E7006EA630 /* SwiftPackageProductDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E9B67A15259C68E7006EA630 /* RemoteSwiftPackageReference */;
+			productName = iOSIntPackage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 74B7924C202B3254006BCB41 /* Project object */;
 }

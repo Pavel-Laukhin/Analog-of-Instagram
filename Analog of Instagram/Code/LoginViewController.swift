@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class LoginViewController: UIViewController {
     
@@ -85,6 +86,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .systemBackground
         addSubviews()
         setupSubviews()
+        addCustomView()
     }
     
     private func addSubviews() {
@@ -112,6 +114,16 @@ class LoginViewController: UIViewController {
             logInButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 32),
             logInButton.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+    }
+    
+    private func addCustomView() {
+        let customView = CustomView(frame: .zero)
+        view.addSubview(customView)
+        
+        customView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.height.equalTo(200)
+        }
     }
     
     @objc private func logInButtonPressed() {
