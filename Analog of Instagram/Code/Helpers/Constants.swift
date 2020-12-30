@@ -9,14 +9,14 @@
 import UIKit
 
 /// Constants
-struct K {
+enum K {
     
-    struct Size {
+    enum Size {
         static let textFieldWidth: CGFloat = 300
         static let ofThumbnailPhotos: CGSize = CGSize(width: 50, height: 50)
     }
     
-    struct Server {
+    enum Server {
         static let scheme = "http"
         static let host = "localhost"
         static let port = 8080

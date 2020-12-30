@@ -8,6 +8,7 @@
 
 import UIKit
 import Kingfisher
+import SnapKit
 
 enum TransitionState {
     case delegate, callback
@@ -16,6 +17,7 @@ enum TransitionState {
 final class FeedCell: UICollectionViewCell {
     
     weak var delegate: TransitionProtocol?
+    private var queue: DispatchQueue { DispatchQueue.global() }
     
     // Реализация перехода с помощью колбэка (чисто для себя потестить, как это работает):
     var callback: ((User.Identifier) -> Void)?
@@ -23,11 +25,6 @@ final class FeedCell: UICollectionViewCell {
     
     var post: Post? {
         didSet {
-            
-            // Установка кнопки isLike:
-            addIsLikeButton()
-            
-            // Обновляем интерфейс:
             updateUI()
         }
     }
@@ -43,30 +40,50 @@ final class FeedCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
+    
     private lazy var authorNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .black
         return label
     }()
+    
     private lazy var dateLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .black
         return label
     }()
+    
     private lazy var postImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
+    
     private lazy var numberOfLikesLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .black
         return label
     }()
-    private weak var isLikeButton: UIButton?
+    
+    private lazy var isLikeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
+        if let post = post {
+            if post.currentUserLikesThisPost {
+                button.tintColor = .systemBlue
+                isCurrentUserLikesThisPost = true
+            } else {
+                button.tintColor = .lightGray
+                isCurrentUserLikesThisPost = false
+            }
+        }
+        button.addTarget(self, action: #selector(isLikeButtonPressed), for: .touchUpInside)
+        return button
+    }()
+    
     private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
@@ -74,6 +91,7 @@ final class FeedCell: UICollectionViewCell {
         label.numberOfLines = 0
         return label
     }()
+    
     private lazy var bigLikeImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "bigLike")
@@ -108,25 +126,7 @@ final class FeedCell: UICollectionViewCell {
     }
     
     // MARK: - Life cycle
-    private func addIsLikeButton() {
-        let button = UIButton(type: .system)
-        button.setImage(#imageLiteral(resourceName: "like"), for: .normal)
-        if let post = post {
-            if post.currentUserLikesThisPost {
-                button.tintColor = .systemBlue
-                isCurrentUserLikesThisPost = true
-            } else {
-                button.tintColor = .lightGray
-                isCurrentUserLikesThisPost = false
-            }
-        }
-        button.addTarget(self, action: #selector(isLikeButtonPressed), for: .touchUpInside)
-        isLikeButton = button
-        contentView.addSubview(isLikeButton!)
-    }
-    
     private func updateUI() {
-        
         guard let post = self.post else { return }
         avatarImageView.kf.indicatorType = .activity
         avatarImageView.kf.setImage(with: URL(string: post.authorAvatar))
@@ -149,7 +149,8 @@ final class FeedCell: UICollectionViewCell {
          postImageView,
          numberOfLikesLabel,
          descriptionLabel,
-         bigLikeImageView].forEach { contentView.addSubview($0) }
+         bigLikeImageView,
+         isLikeButton].forEach { contentView.addSubview($0) }
     }
     
     // Добавляем распознаватель жестов
@@ -160,63 +161,64 @@ final class FeedCell: UICollectionViewCell {
     
     // Теперь настроим фреймы:
     private func setupLayout() {
-                
-        guard let isLikeButton = isLikeButton  else { return }
+        avatarImageView.snp.makeConstraints { make in
+            make.top.equalTo(contentView).offset(8)
+            make.leading.equalTo(contentView).offset(15)
+            make.width.height.equalTo(35)
+        }
         
-        deactivateAutoresizingMask(in: [
-            avatarImageView,
-            authorNameLabel,
-            dateLabel,
-            postImageView,
-            isLikeButton,
-            numberOfLikesLabel,
-            descriptionLabel,
-            bigLikeImageView
-        ])
+        authorNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(avatarImageView)
+            make.leading.equalTo(avatarImageView.snp.trailing).offset(8)
+            make.trailing.equalTo(contentView).offset(-15)
+        }
         
-        NSLayoutConstraint.activate([
-            avatarImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            avatarImageView.widthAnchor.constraint(equalToConstant: 35),
-            avatarImageView.heightAnchor.constraint(equalToConstant: 35),
-            
-            
-            authorNameLabel.topAnchor.constraint(equalTo: avatarImageView.topAnchor),
-            authorNameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
-            authorNameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-
-            dateLabel.bottomAnchor.constraint(equalTo: avatarImageView.bottomAnchor),
-            dateLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 8),
-            dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 15),
-
-            postImageView.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 8),
-            postImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            postImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            postImageView.heightAnchor.constraint(equalTo: postImageView.widthAnchor),
-            
-            isLikeButton.topAnchor.constraint(equalTo: postImageView.bottomAnchor),
-            isLikeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-            isLikeButton.widthAnchor.constraint(equalToConstant: 44),
-            isLikeButton.heightAnchor.constraint(equalToConstant: 44),
-
-            numberOfLikesLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            numberOfLikesLabel.centerYAnchor.constraint(equalTo: isLikeButton.centerYAnchor),
-            
-            descriptionLabel.topAnchor.constraint(equalTo: isLikeButton.bottomAnchor),
-            descriptionLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            descriptionLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15),
-            descriptionLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            
-            bigLikeImageView.centerXAnchor.constraint(equalTo: postImageView.centerXAnchor),
-            bigLikeImageView.centerYAnchor.constraint(equalTo: postImageView.centerYAnchor)
-        ])
+        dateLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(avatarImageView)
+            make.leading.equalTo(avatarImageView.snp.trailing).offset(8)
+            make.trailing.equalTo(contentView).offset(-15)
+        }
+        
+        postImageView.snp.makeConstraints { make in
+            make.top.equalTo(avatarImageView.snp.bottom).offset(8)
+            make.leading.trailing.equalTo(contentView)
+            make.height.equalTo(postImageView.snp.width)
+        }
+        
+        isLikeButton.snp.makeConstraints { make in
+            make.top.equalTo(postImageView.snp.bottom)
+            make.trailing.equalTo(contentView).offset(-15)
+            make.width.height.equalTo(44)
+        }
+        
+        numberOfLikesLabel.snp.makeConstraints { make in
+            make.leading.equalTo(contentView).offset(15)
+            make.centerY.equalTo(isLikeButton)
+        }
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(isLikeButton.snp.bottom)
+            make.leading.equalTo(contentView).offset(15)
+            make.trailing.equalTo(contentView).offset(-15)
+            make.bottom.equalTo(contentView)
+        }
+        
+        bigLikeImageView.snp.makeConstraints { make in
+            make.center.equalTo(postImageView)
+        }
     }
+    
+    // Без этого метода в консоль посыпятся ошибки констрейнтов моей self-size ячейки:
+    override func systemLayoutSizeFitting(_ targetSize: CGSize, withHorizontalFittingPriority horizontalFittingPriority: UILayoutPriority, verticalFittingPriority: UILayoutPriority) -> CGSize {
+        self.contentView.frame = self.bounds
+        self.contentView.layoutIfNeeded()
+        return self.contentView.frame.size
+      }
     
     // MARK: - Actions
     @objc func isLikeButtonPressed() {
         switch  isCurrentUserLikesThisPost {
         case true:
-            guard let isLikeButton = isLikeButton else { return }
             isCurrentUserLikesThisPost = false
             isLikeButton.tintColor = .lightGray
             if !isInTheProcessOfChangingLikeState {
@@ -224,7 +226,6 @@ final class FeedCell: UICollectionViewCell {
                 toMarkAsUnliked()
             }
         case false:
-            guard let isLikeButton = isLikeButton else { return }
             isCurrentUserLikesThisPost = true
             isLikeButton.tintColor = .systemBlue
             if !isInTheProcessOfChangingLikeState {
@@ -321,21 +322,6 @@ final class FeedCell: UICollectionViewCell {
         appearanceAnimation.values = [0, 1, 1, 0]
         appearanceAnimation.duration = 0.6
         bigLikeImageView.layer.add(appearanceAnimation, forKey: "shakeAnimation")
-    }
-    
-}
-
-//Добавляем глобальную очередь
-extension FeedCell {
-    
-    var queue: DispatchQueue { DispatchQueue.global() }
-    
-}
-
-extension FeedCell {
-    
-    private func deactivateAutoresizingMask(in views: [UIView]) {
-        views.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
     
 }
