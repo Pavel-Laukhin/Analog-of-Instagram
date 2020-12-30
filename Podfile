@@ -7,5 +7,6 @@ target 'Analog of Instagram' do
 
   # Pods for Analog of Instagram
   pod 'Kingfisher'
+  pod 'SnapKit'
 
 end
