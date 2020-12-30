@@ -14,7 +14,6 @@ final class CustomView: UIView {
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "checkmark")
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -25,10 +24,22 @@ final class CustomView: UIView {
         imageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+        setupImage()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setupImage() {
+        DispatchQueue.global().async {
+            let processor = ImageProcessor()
+            processor.processImage(sourceImage: #imageLiteral(resourceName: "new7"), filter: .posterize) { image in
+                DispatchQueue.main.async {
+                    self.imageView.image = image
+                }
+            }
+        }
     }
     
 }
